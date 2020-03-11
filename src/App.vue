@@ -5,13 +5,7 @@
   </div>
 </template>
 <script>
-  export default {
-    mounted () {
-      this.$store.dispatch('setTest', 75).then(() => {
-        console.log(this.$store.state.book.test)
-      })
-    }
-  }
+  export default {}
   document.addEventListener('DOMContentLoaded', () => {
     const html = document.querySelector('html')
     let fontSize = window.innerWidth / 10
@@ -20,9 +14,9 @@
   })
 </script>
 <style lang="scss">
-@import "./assets/styles/global";
-.text{
-  font-family: "Days One";
-  font-size: px2rem(20);
+#app{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 </style>
