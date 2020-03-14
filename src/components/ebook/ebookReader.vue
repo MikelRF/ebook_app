@@ -7,24 +7,37 @@
 
 <script>
   import { ebookMixin } from '../../utils/mixin'
+  import {
+    // getTheme,
+    // saveTheme,
+    // saveMetadata,
+    // getLocation,
+    getFontFamily,
+    saveFontFamily,
+    getFontSize,
+    saveFontSize
+  } from '../../utils/localStorage'
   import Epub from 'epubjs'
   global.epub = Epub
   export default {
     name: 'ebookReader',
     mixins: [ebookMixin],
     methods: {
+      // 上一页
       prevPage () {
         if (this.rendition) { // 书籍对象是否存在
-          this.rendition.prev() // 上一页
+          this.rendition.prev()
           this.hideTitleAndMenu()
         }
       },
+      // 下一页
       nextPage () {
         if (this.rendition) { // 书籍对象是否存在
           this.rendition.next() // 下一页
           this.hideTitleAndMenu()
         }
       },
+      // 显示标题,菜单
       showTitleAndMenu () {
         // this.$store.dispatch('setMenuVisible', !this.menuVisible)
         this.setMenuVisible(!this.menuVisible)
@@ -33,27 +46,59 @@
           this.setFontFamilyVisible(false)
         }
       },
+      // 隐藏标题,菜单
       hideTitleAndMenu () {
         // this.$store.dispatch('setMenuVisible', false)
         this.setMenuVisible(false)
         this.setSettingVisible(-1)
         this.setFontFamilyVisible(false)
       },
+      // 初始缓存字号
+      initFontSize() {
+        let fontSize = getFontSize(this.fileName)
+        // 无缓存
+        if (!fontSize) {
+          fontSize = 16
+          saveFontSize(this.fileName, fontSize)
+        } else {
+          this.rendition.themes.fontSize(fontSize)
+          this.setDefaultFontSize(fontSize)
+        }
+        return fontSize
+      },
+      // 初始缓存字体
+      initFontFamily() {
+        let font = getFontFamily(this.fileName)
+        if (!font) {
+          font = 'Default'
+          saveFontFamily(this.fileName, font)
+        } else {
+          this.rendition.themes.font(font)
+          this.setDefaultFontFamily(font)
+        }
+        return font
+      },
       // 初始化电子书
       initEpub () {
         const url = 'http://localhost:81/epub/' + this.fileName + '.epub'
         this.book = new Epub(url)
         this.setCurrentBook(this.book)
+        // 渲染电子书
         this.rendition = this.book.renderTo('read', {
           width: innerWidth,
           height: innerHeight,
           method: 'default' // 与微信兼容
         })
-        this.rendition.display()
+        this.rendition.display().then(() => {
+          this.initFontSize() // 初始化缓存中当前电子书字号
+          this.initFontFamily() // 初始化缓存中当前电子书字号
+        })
+        // 点击前
         this.rendition.on('touchstart', event => {
           this.touchStartX = event.changedTouches[0].clientX
           this.touchStartTime = event.timeStamp
         })
+        // 点击后
         this.rendition.on('touchend', event => {
           const offsetX = event.changedTouches[0].clientX - this.touchStartX
           const time = event.timeStamp - this.touchStartTime
@@ -67,12 +112,7 @@
           // event.preventDefault()
           // event.stopPropagation()
         })
-        // this.rendition.hooks.content.register(contents => {
-        //     contents.addStylesheet('http://192.168.3.2:81/fonts/daysOne.css')
-        //     contents.addStylesheet('http://192.168.3.2:81/fonts/cabin.css')
-        //     contents.addStylesheet('http://192.168.3.2:81/fonts/tangerine.css')
-        //     contents.addStylesheet('http://192.168.3.2:81/fonts/montserrat.css')
-        // })
+        // 初始电子书加载字体
         this.rendition.hooks.content.register(contents => {
           Promise.all([
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
@@ -87,9 +127,6 @@
     },
     mounted () {
       const fileName = this.$route.params.fileName.split('|').join('/')
-      // this.$store.dispatch('setFileName', fileName).then(() => {
-      //   this.initEpub()
-      // })
       this.setFileName(fileName).then(() => {
         this.initEpub()
       })
