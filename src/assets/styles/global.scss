@@ -2,8 +2,6 @@
   规定整个站点的公共样式、公共方法、公共参数等
  */
 @import './reset';
+@import './mixin';
+@import './transition';
 
-$ratio: 375 / 10;
-@function px2rem($px){
-  @return $px / $ratio + rem
-}
