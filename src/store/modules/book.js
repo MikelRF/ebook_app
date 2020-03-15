@@ -6,7 +6,7 @@ const book = {
     defaultFontSize: 16, // 默认字体大小
     defaultFontFamily: 'Default', // 当前选中的字体
     fontFamilyVisible: false, // 字体弹窗是否可见
-    defaultTheme: 'Default',
+    defaultTheme: 'Default', // 默认主题
     bookAvailable: false,
     progress: 0,
     section: 0,

@@ -8,8 +8,8 @@
 <script>
   import { ebookMixin } from '../../utils/mixin'
   import {
-    // getTheme,
-    // saveTheme,
+    getTheme,
+    saveTheme,
     // saveMetadata,
     // getLocation,
     getFontFamily,
@@ -78,9 +78,23 @@
         }
         return font
       },
+      // 初始缓存主题
+      initTheme() {
+        let defaultTheme = getTheme(this.fileName)
+        // 无缓存
+        if (!defaultTheme) {
+          defaultTheme = this.themeList[0].name // 取默认样式
+          this.setDefaultTheme(defaultTheme)
+          saveTheme(this.fileName, defaultTheme) // 缓存
+        }
+        this.themeList.forEach(theme => { // 注册所有主题样式
+          this.rendition.themes.register(theme.name, theme.style)
+        })
+        this.rendition.themes.select(defaultTheme) // 渲染主题
+      },
       // 初始化电子书
       initEpub () {
-        const url = 'http://localhost:81/epub/' + this.fileName + '.epub'
+        const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
         this.book = new Epub(url)
         this.setCurrentBook(this.book)
         // 渲染电子书
@@ -90,6 +104,8 @@
           method: 'default' // 与微信兼容
         })
         this.rendition.display().then(() => {
+          this.initGlobalTheme() // 初始化缓存中当前电子书全局主题
+          this.initTheme() // 初始化缓存中当前电子书主题
           this.initFontSize() // 初始化缓存中当前电子书字号
           this.initFontFamily() // 初始化缓存中当前电子书字号
         })
