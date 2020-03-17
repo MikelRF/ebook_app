@@ -1,5 +1,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, ThemeList } from './book'
+import { saveLocation } from './localStorage'
 
 export const ebookMixin = {
   computed: {
@@ -68,6 +69,27 @@ export const ebookMixin = {
           break
         default: break
       }
+    },
+    // 刷新进度条
+    refreshLocation() {
+      const currentLocation = this.currentBook.rendition.currentLocation()
+      const progress = this.currentBook.locations.percentageFromCfi(currentLocation.start.cfi)
+      this.setProgress(Math.floor(progress * 100))
+      this.setSection(currentLocation.start.index)
+      saveLocation(this.fileName, currentLocation.start.cfi)
+    },
+    // 自定义display方法，cb为回调函数
+    myDisplay(target, cb) {
+      if (target) {
+        this.currentBook.rendition.display(target).then(() => {
+          this.refreshLocation()
+        })
+      } else {
+        return this.currentBook.rendition.display().then(() => {
+          this.refreshLocation()
+        })
+      }
+      if (cb) cb()
     }
   }
 }

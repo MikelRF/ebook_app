@@ -3,8 +3,16 @@ $ratio: 375 / 10;
   @return $px / $ratio + rem
 }
 
+//居中样式
 @mixin center{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+//省略多余字
+@mixin ellipsis {
+  text-overflow: ellipsis; //多出的用省略号
+  overflow: hidden; //超过宽度隐藏
+  white-space: nowrap; //不换行
 }

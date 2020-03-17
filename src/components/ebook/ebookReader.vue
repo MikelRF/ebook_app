@@ -11,7 +11,7 @@
     getTheme,
     saveTheme,
     // saveMetadata,
-    // getLocation,
+    getLocation,
     getFontFamily,
     saveFontFamily,
     getFontSize,
@@ -92,23 +92,34 @@
         })
         this.rendition.themes.select(defaultTheme) // 渲染主题
       },
-      // 初始化电子书
-      initEpub () {
-        const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
-        this.book = new Epub(url)
-        this.setCurrentBook(this.book)
-        // 渲染电子书
+      // 初始化渲染电子书
+      initRendition() {
+        // 渲染位置
         this.rendition = this.book.renderTo('read', {
           width: innerWidth,
           height: innerHeight,
           method: 'default' // 与微信兼容
         })
-        this.rendition.display().then(() => {
+        const location = getLocation(this.fileName) // 获取阅读进度
+        // 异步显示电子书
+        this.myDisplay(location, () => {
           this.initGlobalTheme() // 初始化缓存中当前电子书全局主题
           this.initTheme() // 初始化缓存中当前电子书主题
           this.initFontSize() // 初始化缓存中当前电子书字号
           this.initFontFamily() // 初始化缓存中当前电子书字号
         })
+        // 初始电子书加载字体
+        this.rendition.hooks.content.register(contents => {
+          Promise.all([
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`)
+          ])
+        })
+      },
+      // 手势操作
+      initGesture() {
         // 点击前
         this.rendition.on('touchstart', event => {
           this.touchStartX = event.changedTouches[0].clientX
@@ -128,15 +139,20 @@
           // event.preventDefault()
           // event.stopPropagation()
         })
-        // 初始电子书加载字体
-        this.rendition.hooks.content.register(contents => {
-          Promise.all([
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`)
-          ]).then(() => {
-            console.log('字体加载完毕')
+      },
+      // 初始化电子书
+      initEpub () {
+        const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
+        this.book = new Epub(url)
+        this.setCurrentBook(this.book)
+        this.initRendition() // 渲染电子书
+        this.initGesture() // 手势操作
+        // 电子书全部加载完毕后电子书按字数分页，基值为每页750字， 受屏幕大小，字体大小因素进行分页
+        this.book.ready.then(() => {
+          return this.book.locations.generate(750 * (window.innerWidth / 375) *
+            (getFontSize(this.fileName) / 16)).then(() => {
+            this.refreshLocation()
+            this.setBookAvailable(true)
           })
         })
       }

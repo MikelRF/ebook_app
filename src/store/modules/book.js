@@ -7,9 +7,9 @@ const book = {
     defaultFontFamily: 'Default', // 当前选中的字体
     fontFamilyVisible: false, // 字体弹窗是否可见
     defaultTheme: 'Default', // 默认主题
-    bookAvailable: false,
-    progress: 0,
-    section: 0,
+    bookAvailable: false, // 当前电子书加载是否完毕
+    progress: 0, // 阅读进度
+    section: 0, // 阅读章节的位置
     isPaginating: true,
     currentBook: null, // 获取当前阅览书籍对象
     navigation: null,

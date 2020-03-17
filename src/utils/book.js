@@ -28,14 +28,6 @@ export function ThemeList(vue) {
         body: {
           // color: '#4c5059',
           background: '#efefef'
-        //   'padding-top': `${realPx(48)}px!important`,
-        //   'padding-bottom': `${realPx(48)}px!important`
-        // },
-        // img: {
-        //   width: '100%'
-        // },
-        // '.epubjs-hl': {
-        //   fill: 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply'
         }
       }
     },
@@ -46,14 +38,6 @@ export function ThemeList(vue) {
         body: {
           color: '#5c5b56',
           background: '#c6c2b6'
-        //   'padding-top': `${realPx(48)}px!important`,
-        //   'padding-bottom': `${realPx(48)}px!important`
-        // },
-        // img: {
-        //   width: '100%'
-        // },
-        // '.epubjs-hl': {
-        //   fill: 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply'
         }
       }
     },
@@ -64,14 +48,6 @@ export function ThemeList(vue) {
         body: {
           color: '#404c42',
           background: '#a9c1a9'
-        //   'padding-top': `${realPx(48)}px!important`,
-        //   'padding-bottom': `${realPx(48)}px!important`
-        // },
-        // img: {
-        //   width: '100%'
-        // },
-        // '.epubjs-hl': {
-        //   fill: 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply'
         }
       }
     },
@@ -82,14 +58,6 @@ export function ThemeList(vue) {
         body: {
           color: '#cecece',
           background: '#000000'
-        //   'padding-top': `${realPx(48)}px!important`,
-        //   'padding-bottom': `${realPx(48)}px!important`
-        // },
-        // img: {
-        //   width: '100%'
-        // },
-        // '.epubjs-hl': {
-        //   fill: 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply'
         }
       }
     }
