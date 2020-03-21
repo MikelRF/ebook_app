@@ -2,11 +2,19 @@
 <template>
   <div class="ebook-reader">
     <div id="read"></div>
+    <div class="mask"
+         @click="onMaskClick"
+         @touchmove="moveStart"
+         @touchend="moveEnd"
+         @mousedown.left="onMouseEnter"
+         @mousemove.left="onMouseMove"
+         @mouseup.left="onMouseEnd"></div>
   </div>
 </template>
 
 <script>
   import { ebookMixin } from '../../utils/mixin'
+  import { flatten } from '../../utils/book'
   import {
     getTheme,
     saveTheme,
@@ -23,17 +31,99 @@
     name: 'ebookReader',
     mixins: [ebookMixin],
     methods: {
+      // 1 - 鼠标进入
+      // 2 - 鼠标进入后的移动
+      // 3 - 鼠标从移动状态松手
+      // 4 - 鼠标还原
+      // 鼠标结束
+      onMouseEnd(e) {
+        if (this.mouseState === 2) { // 鼠标移动后结束，完成下拉操作
+          this.setOffsetY(0) // 还原偏移量
+          this.firstOffsetY = null
+          this.mouseState = 3 // 状态3
+        } else {
+          this.mouseState = 4 // 鼠标只点击，没有移动跳到状态4
+        }
+        const time = e.timeStamp - this.mouseStartTime
+        if (time < 100) {
+          this.mouseState = 4 // 只有短暂移动不算
+        }
+        e.preventDefault()
+        e.stopPropagation()
+      },
+      // 鼠标移动， 只要移动就会触发
+      onMouseMove(e) {
+        if (this.mouseState === 1) { // 进入状态1后才开始记录偏移量
+          this.mouseState = 2
+        } else if (this.mouseState === 2) {
+          let offsetY = 0
+          if (this.firstOffsetY) {
+            offsetY = e.clientY - this.firstOffsetY
+            this.setOffsetY(offsetY)
+          } else {
+            this.firstOffsetY = e.clientY
+          }
+        }
+        e.preventDefault()
+        e.stopPropagation()
+      },
+      // 鼠标点击
+      onMouseEnter(e) {
+        this.mouseState = 1 // 状态1
+        this.mouseStartTime = e.timeStamp
+        e.preventDefault()
+        e.stopPropagation()
+      },
+      // 点击屏幕切换页面
+      onMaskClick(e) {
+        // 鼠标移动操作时不触发翻页时间，除非为状态4
+        if (this.mouseState && (this.mouseState === 2 || this.mouseState === 3)) {
+          return
+        }
+        const offsetX = e.offsetX
+        const width = window.innerWidth
+        if (offsetX > 0 && offsetX < width * 0.3) {
+          this.prevPage()
+        } else if (offsetX > 0 && offsetX > width * 0.7) {
+          this.nextPage()
+        } else {
+          this.showTitleAndMenu()
+        }
+      },
+      // 触屏
+      moveStart(e) {
+        let offsetY = 0 // 下拉偏移量
+        if (this.firstOffsetY) {
+          // 拖动终点
+          offsetY = e.changedTouches[0].clientY - this.firstOffsetY
+          this.setOffsetY(offsetY)
+        } else {
+          // 拖动起点
+          this.firstOffsetY = e.changedTouches[0].clientY
+        }
+        e.preventDefault() // 浏览器不要执行与事件关联的默认动作
+        e.stopPropagation() // 组织传播
+      },
+      // 脱手
+      moveEnd(e) {
+        this.firstOffsetY = null
+        this.setOffsetY(0)
+      },
       // 上一页
       prevPage () {
-        if (this.rendition) { // 书籍对象是否存在
-          this.rendition.prev()
+        if (this.rendition) {
+          this.rendition.prev().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
       // 下一页
       nextPage () {
-        if (this.rendition) { // 书籍对象是否存在
-          this.rendition.next() // 下一页
+        if (this.rendition) {
+          this.rendition.next().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
@@ -45,13 +135,6 @@
           this.setSettingVisible(-1)
           this.setFontFamilyVisible(false)
         }
-      },
-      // 隐藏标题,菜单
-      hideTitleAndMenu () {
-        // this.$store.dispatch('setMenuVisible', false)
-        this.setMenuVisible(false)
-        this.setSettingVisible(-1)
-        this.setFontFamilyVisible(false)
       },
       // 初始缓存字号
       initFontSize() {
@@ -82,15 +165,16 @@
       initTheme() {
         let defaultTheme = getTheme(this.fileName)
         // 无缓存
-        if (!defaultTheme) {
+        if (defaultTheme == null) {
           defaultTheme = this.themeList[0].name // 取默认样式
-          this.setDefaultTheme(defaultTheme)
           saveTheme(this.fileName, defaultTheme) // 缓存
         }
+        this.setDefaultTheme(defaultTheme)
         this.themeList.forEach(theme => { // 注册所有主题样式
           this.rendition.themes.register(theme.name, theme.style)
         })
         this.rendition.themes.select(defaultTheme) // 渲染主题
+        this.initGlobalTheme() // 初始化缓存中当前电子书全局主题
       },
       // 初始化渲染电子书
       initRendition() {
@@ -99,14 +183,6 @@
           width: innerWidth,
           height: innerHeight,
           method: 'default' // 与微信兼容
-        })
-        const location = getLocation(this.fileName) // 获取阅读进度
-        // 异步显示电子书
-        this.myDisplay(location, () => {
-          this.initGlobalTheme() // 初始化缓存中当前电子书全局主题
-          this.initTheme() // 初始化缓存中当前电子书主题
-          this.initFontSize() // 初始化缓存中当前电子书字号
-          this.initFontFamily() // 初始化缓存中当前电子书字号
         })
         // 初始电子书加载字体
         this.rendition.hooks.content.register(contents => {
@@ -117,11 +193,19 @@
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`)
           ])
         })
+        const location = getLocation(this.fileName) // 获取阅读进度
+        // 异步显示电子书
+        this.myDisplay(location, () => {
+          this.initTheme() // 初始化缓存中当前电子书主题
+          this.initFontSize() // 初始化缓存中当前电子书字号
+          this.initFontFamily() // 初始化缓存中当前电子书字号
+        })
       },
       // 手势操作
       initGesture() {
         // 点击前
         this.rendition.on('touchstart', event => {
+          console.log(event)
           this.touchStartX = event.changedTouches[0].clientX
           this.touchStartTime = event.timeStamp
         })
@@ -136,8 +220,31 @@
           } else {
             this.showTitleAndMenu()
           }
-          // event.preventDefault()
-          // event.stopPropagation()
+          event.preventDefault()
+          event.stopPropagation()
+        })
+      },
+      // 获取图书封面，作者等
+      parseBook() {
+        this.book.loaded.cover.then(cover => {
+          this.book.archive.createUrl(cover).then(url => {
+            this.setCover(url)
+          })
+        })
+        this.book.loaded.metadata.then(metadata => {
+          this.setMetadata(metadata)
+        })
+        this.book.loaded.navigation.then(nav => {
+          const navItem = flatten(nav.toc) // 拆分为一维数组
+          // 设置层级
+          function setLevel(item, level = 0) {
+            return !item.parent ? level : setLevel(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
+          }
+          navItem.forEach(item => {
+            item.level = setLevel(item)
+          })
+          this.setNavigation(navItem)
+          // console.log(navItem)
         })
       },
       // 初始化电子书
@@ -146,7 +253,8 @@
         this.book = new Epub(url)
         this.setCurrentBook(this.book)
         this.initRendition() // 渲染电子书
-        this.initGesture() // 手势操作
+        // this.initGesture() // 手势操作
+        this.parseBook() // 获取图书封面，作者等
         // 电子书全部加载完毕后电子书按字数分页，基值为每页750字， 受屏幕大小，字体大小因素进行分页
         this.book.ready.then(() => {
           return this.book.locations.generate(750 * (window.innerWidth / 375) *
@@ -166,6 +274,18 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .ebook-reader {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    .mask {
+      width: 100%;
+      height: 100%;
+      z-index: 150;
+      top: 0;
+      left: 0;
+      position: absolute;
+    }
+  }
 </style>

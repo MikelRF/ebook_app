@@ -2,9 +2,6 @@
   <transition name="slide-up">
     <div class="setting-wrapper" v-show="menuVisible && settingVisible === 2">
       <div class="setting-progress">
-<!--        <div class="read-time-wrapper">-->
-<!--          <span class="icon-forward"></span>-->
-<!--        </div>-->
         <div class="progress-wrapper">
           <div class="progress-icon-wrapper">
             <span class="icon-back" @click="prevSection()"></span>
@@ -37,37 +34,19 @@
   export default {
     name: 'ebookSettingProgress',
     mixins: [ebookMixin],
-    data() {
-      return {
-        isProgressLoading: false
-      }
-    },
-    computed: {
-      getSectionName() {
-        if (this.section) {
-          const sectionInfo = this.currentBook.section(this.section) // 获取当前章节的数据
-          if (sectionInfo && sectionInfo.href) {
-            return this.currentBook.navigation.get(sectionInfo.href).label // 获取章节名
-          }
-        }
-        return ''
-      }
-    },
     methods: {
       // 上一章
       prevSection() {
-        if (this.section > 0 && !this.isProgressLoading) {
-          // this.isProgressLoading = true
+        if (this.section > 0 && this.bookAvailable) {
           this.setSection(this.section - 1).then(() => {
             this.displaySection(() => {
-              // this.isProgressLoading = false
             })
           })
         }
       },
       // 下一章
       nextSection() {
-        if (this.currentBook.spine.length - 1 > this.section && !this.isProgressLoading) {
+        if (this.currentBook.spine.length - 1 > this.section && this.bookAvailable) {
           // this.isProgressLoading = true
           this.setSection(this.section + 1).then(() => {
             this.displaySection(() => {
@@ -122,16 +101,6 @@
       position: relative;
       width: 100%;
       height: 100%;
-      /*
-      .read-time-wrapper {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: px2rem(40);
-        @include center;
-        font-size: px2rem(12);
-      }*/
       .progress-wrapper {
         width: 100%;
         height: 100%;

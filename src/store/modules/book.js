@@ -8,17 +8,17 @@ const book = {
     fontFamilyVisible: false, // 字体弹窗是否可见
     defaultTheme: 'Default', // 默认主题
     bookAvailable: false, // 当前电子书加载是否完毕
-    progress: 0, // 阅读进度
-    section: 0, // 阅读章节的位置
+    progress: 0, // 阅读进度百分比
+    section: 0, // 阅读章节
     isPaginating: true,
     currentBook: null, // 获取当前阅览书籍对象
-    navigation: null,
-    cover: null,
-    metadata: null,
+    navigation: null, // 目录
+    cover: null, // 封面
+    metadata: null, // 书籍信息
     paginate: '',
     pagelist: null,
-    offsetY: 0,
-    isBookmark: null
+    offsetY: 0, // 下拉书签偏移量
+    isBookmark: null // 当前页是否是书签
   },
   mutations: {
     SET_FILENAME: (state, fileName) => {

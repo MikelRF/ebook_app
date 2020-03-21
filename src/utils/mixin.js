@@ -1,6 +1,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, ThemeList } from './book'
-import { saveLocation } from './localStorage'
+import { saveLocation, getBookmark } from './localStorage'
 
 export const ebookMixin = {
   computed: {
@@ -27,6 +27,9 @@ export const ebookMixin = {
     ]),
     themeList() {
         return ThemeList(this)
+    },
+    getSectionName() {
+      return this.section ? this.navigation[this.section].label : ''
     }
   },
   methods: {
@@ -67,29 +70,54 @@ export const ebookMixin = {
         case 'Night':
           addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
           break
-        default: break
+        default:
+          break
       }
     },
-    // 刷新进度条
+    // 刷新
     refreshLocation() {
       const currentLocation = this.currentBook.rendition.currentLocation()
-      const progress = this.currentBook.locations.percentageFromCfi(currentLocation.start.cfi)
-      this.setProgress(Math.floor(progress * 100))
-      this.setSection(currentLocation.start.index)
-      saveLocation(this.fileName, currentLocation.start.cfi)
+      if (currentLocation && currentLocation.start) {
+        const startCfi = currentLocation.start.cfi
+        // 通过cfi转换为进度百分比并取整
+        const progress = this.currentBook.locations.percentageFromCfi(startCfi)
+        this.setProgress(Math.floor(progress * 100))
+        this.setSection(currentLocation.start.index)
+        saveLocation(this.fileName, startCfi)
+        /* 判断当前页面是否是书签，不是则把Bookmark设为false
+      防止将当前页设置为书签后，翻到下一页仍有书签标记 */
+        const bookmark = getBookmark(this.fileName)
+        // console.log(bookmark)
+        if (bookmark) {
+          if (bookmark.some(item => item.cfi === startCfi)) {
+            this.setIsBookmark(true)
+          } else {
+            this.setIsBookmark(false)
+          }
+        } else {
+          this.setIsBookmark(false)
+        }
+      }
     },
     // 自定义display方法，cb为回调函数
     myDisplay(target, cb) {
       if (target) {
         this.currentBook.rendition.display(target).then(() => {
           this.refreshLocation()
+          if (cb) cb()
         })
       } else {
-        return this.currentBook.rendition.display().then(() => {
+        this.currentBook.rendition.display().then(() => {
           this.refreshLocation()
+          if (cb) cb()
         })
       }
-      if (cb) cb()
+    },
+    // 隐藏标题,菜单
+    hideTitleAndMenu() {
+      this.setMenuVisible(false)
+      this.setSettingVisible(-1)
+      this.setFontFamilyVisible(false)
     }
   }
 }

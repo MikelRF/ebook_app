@@ -53,4 +53,5 @@ html, body{
   user-select: none; //防止长按
   overflow: hidden;
   font-family: 'PingFangSC-Light', 'PingFangSC', 'STHeitiSC-Light', 'Helvetica-Light', 'Arial', 'sans-serif';
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); //移动端闪烁
 }

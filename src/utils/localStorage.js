@@ -39,58 +39,62 @@ export function saveLocale(locale) {
   return setLocalStorage('locale', locale)
 }
 
+// 获取阅读位置
 export function getLocation(fileName) {
   return getBookObject(fileName, 'location')
 }
 
+// 保存阅读位置
 export function saveLocation(fileName, location) {
   setBookObject(fileName, 'location', location)
 }
 
+// 获取书签
 export function getBookmark(fileName) {
   return getBookObject(fileName, 'bookmark')
 }
 
+// 保存书签
 export function saveBookmark(fileName, bookmark) {
   setBookObject(fileName, 'bookmark', bookmark)
 }
 
-export function getReadTime(fileName) {
-  return getBookObject(fileName, 'time')
-}
-
-export function saveReadTime(fileName, theme) {
-  setBookObject(fileName, 'time', theme)
-}
-
+// 获取阅读进度
 export function getProgress(fileName) {
   return getBookObject(fileName, 'progress')
 }
 
+// 保存阅读进度
 export function saveProgress(fileName, progress) {
   setBookObject(fileName, 'progress', progress)
 }
 
+// 获取目录
 export function getNavigation(fileName) {
   return getBookObject(fileName, 'navigation')
 }
 
+// 保存目录
 export function saveNavigation(fileName, navigation) {
   setBookObject(fileName, 'navigation', navigation)
 }
 
+// 获取书籍信息
 export function getMetadata(fileName) {
   return getBookObject(fileName, 'metadata')
 }
 
+// 保存书籍信息
 export function saveMetadata(fileName, metadata) {
   setBookObject(fileName, 'metadata', metadata)
 }
 
+// 获取书籍封面
 export function getCover(fileName) {
   return getBookObject(fileName, 'cover')
 }
 
+// 保存书籍封面
 export function saveCover(fileName, cover) {
   setBookObject(fileName, 'cover', cover)
 }

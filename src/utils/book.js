@@ -26,8 +26,10 @@ export function ThemeList(vue) {
       name: 'Default',
       style: {
         body: {
-          // color: '#4c5059',
-          background: '#efefef'
+          color: '#4c5059',
+          background: '#efefef',
+          'padding-top': `${realpx(40)}px!important`,
+          'padding-bottom': `${realpx(32)}px!important`
         }
       }
     },
@@ -37,7 +39,9 @@ export function ThemeList(vue) {
       style: {
         body: {
           color: '#5c5b56',
-          background: '#c6c2b6'
+          background: '#c6c2b6',
+          'padding-top': `${realpx(40)}px!important`,
+          'padding-bottom': `${realpx(32)}px!important`
         }
       }
     },
@@ -47,7 +51,9 @@ export function ThemeList(vue) {
       style: {
         body: {
           color: '#404c42',
-          background: '#a9c1a9'
+          background: '#a9c1a9',
+          'padding-top': `${realpx(40)}px!important`,
+          'padding-bottom': `${realpx(32)}px!important`
         }
       }
     },
@@ -57,11 +63,25 @@ export function ThemeList(vue) {
       style: {
         body: {
           color: '#cecece',
-          background: '#000000'
+          background: '#000000',
+          'padding-top': `${realpx(40)}px!important`,
+          'padding-bottom': `${realpx(32)}px!important`
         }
       }
     }
   ]
+}
+
+// 自适应不同屏幕宽度
+export function px2rem (px) {
+  const ration = 375 / 10
+  return px / ration
+}
+
+// 自适应下的真实px
+export function realpx (px) {
+  const maxWidth = window.innerWidth > 500 ? 500 : window.innerWidth
+  return px * (maxWidth / 375)
 }
 
 // 加载全局动态主题样式
@@ -89,4 +109,9 @@ export function removeAllCss() {
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
   removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
+}
+
+// 多级目录转一级
+export function flatten(array) {
+  return [].concat(...array.map(item => [].concat(item, ...flatten(item.subitems))))
 }
