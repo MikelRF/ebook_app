@@ -49,3 +49,10 @@ $ratio: 375 / 10;
   justify-content: center;
   align-items: flex-start;
 }
+
+@mixin columnTop {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}

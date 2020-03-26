@@ -18,7 +18,9 @@ const book = {
   pagelist: state => state.book.pagelist,
   offsetY: state => state.book.offsetY,
   isBookmark: state => state.book.isBookmark,
-  speakingIconBottom: state => state.book.speakingIconBottom
+  speakingIconBottom: state => state.book.speakingIconBottom,
+  randomBookVisible: state => state.home.randomBookVisible,
+  randomBook: state => state.home.randomBook
 }
 
 export default book

@@ -5,6 +5,9 @@
         <div class="title-text-wrapper">
           <span class="title-text">书城</span>
         </div>
+        <div class="title-icon-shake-wrapper" @click="showRandomBook">
+          <span class="icon-shake"></span>
+        </div>
       </div>
     </transition>
     <div class="title-icon-back-wrapper" :class="{'hide-title': !titleVisible}" @click="back">
@@ -25,6 +28,7 @@
 
 <script>
   import { homeMixin } from '../../utils/mixin'
+import { home } from '../../api/home'
 
   export default {
     name: 'searchBar',
@@ -48,6 +52,17 @@
       }
     },
     methods: {
+      showRandomBook () {
+        this.setRandomBookVisible(true)
+        home().then(response => {
+          if (response && response.status === 200) {
+            const data = response.data
+            const randomIndex = Math.floor(Math.random() * data.random.length)
+            this.setRandomBook(data.random[randomIndex])
+            console.log(this.randomBook)
+          }
+        })
+      },
       hideTitle () {
         this.titleVisible = false
       },
@@ -105,6 +120,19 @@
         @include center;
 
         .title-text {
+          color: #666;
+          font-size: px2rem(16);
+        }
+      }
+
+      .title-icon-shake-wrapper {
+        position: absolute;
+        right: px2rem(15);
+        top: 0;
+        height: px2rem(42);
+        @include center;
+
+        .icon-shake {
           color: #666;
           font-size: px2rem(16);
         }

@@ -5,13 +5,20 @@ import { saveLocation, getBookmark } from './localStorage'
 export const homeMixin = {
   computed: {
     ...mapGetters([
-      'offsetY'
+      'offsetY',
+      'randomBookVisible',
+      'randomBook'
     ])
   },
   methods: {
     ...mapActions([
-      'setOffsetY'
-    ])
+      'setOffsetY',
+      'setRandomBookVisible',
+      'setRandomBook'
+    ]),
+    showBookDetail(book) {
+      console.log('立即阅读')
+    }
   }
 }
 export const ebookMixin = {

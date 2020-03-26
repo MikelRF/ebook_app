@@ -59,6 +59,12 @@ const actions = {
   },
   setOffsetY: ({ commit }, offsetY) => {
     return commit('SET_OFFSETY', offsetY)
+  },
+  setRandomBookVisible: ({ commit }, visible) => {
+    return commit('SET_RANDOM_BOOK_VISIBLE', visible)
+  },
+  setRandomBook: ({ commit }, book) => {
+    return commit('SET_RANDOM_BOOK', book)
   }
 }
 
