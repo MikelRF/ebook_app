@@ -17,7 +17,13 @@ export const homeMixin = {
       'setRandomBook'
     ]),
     showBookDetail(book) {
-      console.log('立即阅读')
+      // this.$router.push({
+      //   path: '/store/detail',
+      //   query: {
+      //     fileName: book.fileName,
+      //     category: book.category
+      //   }
+      // })
     }
   }
 }

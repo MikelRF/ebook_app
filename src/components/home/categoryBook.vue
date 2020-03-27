@@ -1,10 +1,10 @@
 <template>
   <div class="category-book">
-    <title-view :label="categoryText(data.category)" :btn="$t('home.seeAll')" @onClick="showBookCategory"></title-view>
+    <title-view :label="categoryText(data.category)" :btn="'查看全部'" @onClick="showBookCategory"></title-view>
     <div class="category-book-list">
       <div class="category-book-item" v-for="(item, index) in data.list" :key="index" @click="showBookDetail(item)">
         <div class="img-wrapper">
-          <img class="img" v-lazy="item.cover">
+          <img class="img" :src="item.cover">
         </div>
         <div class="content-wrapper">
           <div class="title title-small" ref="title">{{item.title}}</div>
@@ -16,14 +16,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import TitleView from '@/components/home/title'
-  import { categoryText, getCategoryName } from '@/utils/book'
-  import { ebookHome } from '../../utils/mixin'
+  import titleView from './title'
+  import { categoryText, getCategoryName } from '../../utils/home'
+  import { homeMixin } from '../../utils/mixin'
 
   export default {
-    mixins: [ebookHome],
+    mixins: [homeMixin],
     components: {
-      TitleView
+      titleView
     },
     props: {
       data: Object
@@ -31,7 +31,7 @@
     methods: {
       showBookCategory() {
         this.$router.push({
-          path: '/book-store/list',
+          path: '/store/list',
           query: {
             category: getCategoryName(this.data.category),
             categoryText: this.categoryText(this.data.category)

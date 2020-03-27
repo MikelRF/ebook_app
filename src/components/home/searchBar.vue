@@ -59,7 +59,6 @@ import { home } from '../../api/home'
             const data = response.data
             const randomIndex = Math.floor(Math.random() * data.random.length)
             this.setRandomBook(data.random[randomIndex])
-            console.log(this.randomBook)
           }
         })
       },

@@ -149,7 +149,7 @@
           text-align: center;
           color: white;
           font-size: px2rem(14);
-          background: dodgerblue;
+          background: $color-blue;
         }
       }
     }

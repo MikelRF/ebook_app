@@ -1,7 +1,12 @@
 <template>
   <div class="home-title-wrapper">
     <div class="label">{{label}}</div>
-    <div class="btn" :class="{'touch': ifOnTouch}" @touchstart="onTouchStart" @touchend="onTouchEnd" @mousedown="onTouchStart" @mouseup="onTouchEnd" @click="click">{{btn}}</div>
+    <div class="btn" :class="{'touch': ifOnTouch}"
+         @touchstart="onTouchStart"
+         @touchend="onTouchEnd"
+         @mousedown="onTouchStart"
+         @mouseup="onTouchEnd"
+         @click="click">{{btn}}</div>
   </div>
 </template>
 

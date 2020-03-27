@@ -1,17 +1,17 @@
 <template>
   <div class="category">
-    <title-view :label="$t('home.category')" :btn="$t('home.seeAll')" @onClick="showBookList"></title-view>
+    <title-view :label="'分类'" :btn="'查看全部'" @onClick="showBookList"></title-view>
     <div class="category-list">
       <div class="category-item-wrapper" v-for="(item, index) in data" :key="index" @click="showBookCategory(item)">
         <div class="category-item">
           <div class="content-wrapper">
             <div class="title title-medium">{{categoryText(item.category)}}</div>
-            <div class="num sub-title-tiny">{{item.num + ' ' + $t('home.books')}}</div>
+            <div class="num sub-title-tiny">{{'共 ' + item.num + ' 本书'}}</div>
           </div>
           <div class="img-wrapper">
             <div class="img-group">
-              <img class="img" v-lazy="item.img1">
-              <img class="img2" v-lazy="item.img2">
+              <img class="img" :src="item.img1">
+              <img class="img2" :src="item.img2">
             </div>
           </div>
         </div>
@@ -21,12 +21,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import TitleView from '@/components/home/title'
-  import { categoryText, getCategoryName } from '@/utils/book'
+  import titleView from './title'
+  import { categoryText, getCategoryName } from '../../utils/home'
 
   export default {
     components: {
-      TitleView
+      titleView
     },
     props: {
       data: Array
@@ -34,7 +34,7 @@
     methods: {
       showBookCategory(item) {
         this.$router.push({
-          path: '/book-store/list',
+          path: '/store/list',
           query: {
             category: getCategoryName(item.category),
             categoryText: this.categoryText(item.category)
@@ -45,7 +45,7 @@
         return categoryText(category, this)
       },
       showBookList() {
-        this.$router.push('/book-store/list')
+        this.$router.push('/store/list')
       }
     }
   }

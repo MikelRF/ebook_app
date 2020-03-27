@@ -1,28 +1,29 @@
 <template>
   <div class="recommend">
-    <title-view :label="$t('home.recommend')" :btn="$t('home.seeAll')"></title-view>
+    <title-view :label="'热门推荐'" :btn="'查看全部'"></title-view>
     <div class="recommend-list">
       <div class="recommend-item" v-for="(item, index) in data" :key="index" @click="showBookDetail(item)">
         <div class="img-wrapper">
-          <img class="img" v-lazy="item.cover">
+          <img class="img" :src="item.cover">
         </div>
         <div class="content-wrapper">
           <div class="title title-medium" ref="title">{{item.title}}</div>
-          <div class="num sub-title" ref="num">{{$t('home.readers').replace('$1', item.readers)}}</div>
+<!--          <div class="num sub-title" ref="num">{{$t('home.readers').replace('$1', item.readers)}}</div>-->
         </div>
       </div>
     </div>
+    <div class="line"></div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import TitleView from '@/components/home/title'
-  import { ebookHome } from '../../utils/mixin'
+  import titleView from './title'
+  import { homeMixin } from '../../utils/mixin'
 
   export default {
-    mixins: [ebookHome],
+    mixins: [homeMixin],
     components: {
-      TitleView
+      titleView
     },
     props: {
       data: Array
@@ -62,6 +63,10 @@
           }
         }
       }
+    }
+    .line {
+      margin-top: px2rem(15);
+      border: solid px2rem(1) #eee;
     }
   }
 </style>
