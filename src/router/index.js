@@ -26,15 +26,15 @@ const routes = [
       {
         path: 'home',
         component: () => import('../views/store/storeHome')
+      },
+      {
+        path: 'list',
+        component: () => import('../views/store/storeList')
+      },
+      {
+        path: 'detail',
+        component: () => import('../views/store/storeDetail')
       }
-      // {
-      //   path: 'list',
-      //   component: () => import('../views/store/bookList')
-      // },
-      // {
-      //   path: 'detail',
-      //   component: () => import('../views/store/bookDetail')
-      // }
     ]
   }
 ]

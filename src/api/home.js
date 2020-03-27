@@ -23,10 +23,3 @@ export function detail (book) {
     }
   })
 }
-
-export function flatList () {
-  return axios({
-    method: 'get',
-    url: `${process.env.VUE_APP_BOOK_URL}/book/flat-list`
-  })
-}

@@ -10,7 +10,6 @@
 
 <script>
   export default {
-    name: 'toast',
     props: {
       text: [String, Number],
       timeout: {
@@ -18,33 +17,33 @@
         default: 1500
       }
     },
-    data () {
+    data() {
       return {
         visible: false
       }
     },
     methods: {
-      hide () {
+      hide() {
         this.visible = false
       },
-      show () {
+      show() {
         clearTimeout(this.task)
         this.task = null
         this.visible = true
         this.task = setTimeout(() => {
           this.visible = false
         }, this.timeout)
+      },
+      continueShow() {
+        clearTimeout(this.task)
+        this.task = null
+        this.visible = true
       }
-    },
-    continueShow () {
-      clearTimeout(this.task)
-      this.task = null
-      this.visible = true
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
 
   .toast-bg {
@@ -55,7 +54,6 @@
     z-index: 2500;
     width: 100%;
     @include center;
-
     .toast-wrapper {
       width: 60%;
       line-height: px2rem(20);
@@ -65,7 +63,6 @@
       border-radius: px2rem(10);
       font-size: px2rem(14);
       color: white;
-
       .toast {
         text-align: center;
         word-break: break-all;

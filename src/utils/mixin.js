@@ -17,13 +17,13 @@ export const homeMixin = {
       'setRandomBook'
     ]),
     showBookDetail(book) {
-      // this.$router.push({
-      //   path: '/store/detail',
-      //   query: {
-      //     fileName: book.fileName,
-      //     category: book.category
-      //   }
-      // })
+      this.$router.push({
+        path: '/store/detail',
+        query: {
+          fileName: book.fileName,
+          category: book.category
+        }
+      })
     }
   }
 }
