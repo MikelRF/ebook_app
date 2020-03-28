@@ -31,7 +31,7 @@
     computed: {
       title() {
         if (this.list) {
-          return this.total && this.$t('home.allBook').replace('$1', this.totalNumber)
+          return this.total && '共 $1 本图书'.replace('$1', this.totalNumber)
         } else {
           return null
         }

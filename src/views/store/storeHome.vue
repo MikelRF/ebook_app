@@ -9,12 +9,12 @@
       <guess-you-like :data="guessYouLike"></guess-you-like>
       <recommend :data="recommend"></recommend>
       <featured :data="featured"
-                :title-text="'精选'"
-                :btn-text="'查看全部'"></featured>
+                :title-text="'精选'"></featured>
       <div class="category-list-wrapper"
            v-for="(item, index) in categoryList" :key="index">
         <category-book :data="item"></category-book>
       </div>
+      <div class="line"></div>
       <category :data="categories"></category>
     </scroll>
   </div>

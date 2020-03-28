@@ -1,15 +1,12 @@
 <template>
   <div class="store">
-    <store-home></store-home>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import storeHome from './storeHome'
   export default {
-    name: 'store',
-    components: { storeHome }
+    name: 'store'
   }
 </script>
 

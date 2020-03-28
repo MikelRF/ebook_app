@@ -1,6 +1,6 @@
 <template>
   <div class="recommend">
-    <title-view :label="'热门推荐'" :btn="'查看全部'"></title-view>
+    <title-view :label="'热门推荐'"></title-view>
     <div class="recommend-list">
       <div class="recommend-item" v-for="(item, index) in data" :key="index" @click="showBookDetail(item)">
         <div class="img-wrapper">

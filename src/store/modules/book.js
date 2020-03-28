@@ -3,7 +3,7 @@ const book = {
     fileName: '', // 电子书路径
     menuVisible: false, // 菜单栏是否可见
     settingVisible: -1, // -1不显示 0字号 1主题 2进度 3目录
-    defaultFontSize: 16, // 默认字体大小
+    defaultFontSize: 18, // 默认字体大小
     defaultFontFamily: 'Default', // 当前选中的字体
     fontFamilyVisible: false, // 字体弹窗是否可见
     defaultTheme: 'Default', // 默认主题

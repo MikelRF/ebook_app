@@ -10,7 +10,7 @@
           <div class="author sub-title-medium">{{this.randomBook ? this.randomBook.author : ''}}</div>
           <div class="category">{{categoryText()}}</div>
         </div>
-        <div class="read-btn" @click.stop="showBookDetail(this.randomBook)">立即阅读</div>
+        <div class="read-btn" @click.stop="readNow()">立即阅读</div>
       </div>
     </div>
     <div class="close-btn-wrapper" @click="close">
@@ -51,6 +51,10 @@
         } else {
           return ''
         }
+      },
+      readNow() {
+        this.showBookDetail(this.randomBook)
+        this.setRandomBookVisible(false)
       }
     },
     mounted () {

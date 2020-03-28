@@ -2,10 +2,10 @@
   <div class="search-bar" :class="{'hide-title': !titleVisible, 'hide-shadow': shadowVisible}">
     <transition name="title-move">
       <div class="search-bar-title-wrapper" v-show="titleVisible">
-        <div class="title-text-wrapper">
+        <div class="title-text-wrapper title">
           <span class="title-text">书城</span>
         </div>
-        <div class="title-icon-shake-wrapper" @click="showRandomBook">
+        <div class="title-icon-shake-wrapper icon" @click="showRandomBook">
           <span class="icon-shake"></span>
         </div>
       </div>
@@ -28,7 +28,7 @@
 
 <script>
   import { homeMixin } from '../../utils/mixin'
-import { home } from '../../api/home'
+  import { home } from '../../api/home'
 
   export default {
     name: 'searchBar',
@@ -59,6 +59,7 @@ import { home } from '../../api/home'
             const data = response.data
             const randomIndex = Math.floor(Math.random() * data.random.length)
             this.setRandomBook(data.random[randomIndex])
+            console.log('showRandomBook', this.randomBook)
           }
         })
       },
@@ -117,11 +118,6 @@ import { home } from '../../api/home'
         width: 100%;
         height: px2rem(42);
         @include center;
-
-        .title-text {
-          color: #666;
-          font-size: px2rem(16);
-        }
       }
 
       .title-icon-shake-wrapper {
@@ -130,11 +126,6 @@ import { home } from '../../api/home'
         top: 0;
         height: px2rem(42);
         @include center;
-
-        .icon-shake {
-          color: #666;
-          font-size: px2rem(16);
-        }
       }
     }
 
