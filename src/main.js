@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import './assets/styles/icomoon/icon.css'
 import './assets/styles/global.scss'
-import './mock'
+// import './mock'
 
 Vue.config.productionTip = false
 

@@ -21,7 +21,7 @@ export const homeMixin = {
         path: '/store/detail',
         query: {
           fileName: book.fileName,
-          category: book.category
+          category: book.categoryText
         }
       })
     }
@@ -50,10 +50,10 @@ export const ebookMixin = {
       'offsetY',
       'isBookmark'
     ]),
-    themeList() {
-        return ThemeList(this)
+    themeList () {
+      return ThemeList(this)
     },
-    getSectionName() {
+    getSectionName () {
       return this.section ? this.navigation[this.section].label : ''
     }
   },
@@ -80,7 +80,7 @@ export const ebookMixin = {
       'setIsBookmark'
     ]),
     // 初始全局主题样式 (ebookReader、ebookSettingTheme 中调用)
-    initGlobalTheme() {
+    initGlobalTheme () {
       removeAllCss()
       switch (this.defaultTheme) {
         case 'Default':
@@ -100,7 +100,7 @@ export const ebookMixin = {
       }
     },
     // 刷新
-    refreshLocation() {
+    refreshLocation () {
       const currentLocation = this.currentBook.rendition.currentLocation()
       if (currentLocation && currentLocation.start) {
         const startCfi = currentLocation.start.cfi
@@ -125,7 +125,7 @@ export const ebookMixin = {
       }
     },
     // 自定义display方法，cb为回调函数
-    myDisplay(target, cb) {
+    myDisplay (target, cb) {
       if (target) {
         this.currentBook.rendition.display(target).then(() => {
           this.refreshLocation()
@@ -139,7 +139,7 @@ export const ebookMixin = {
       }
     },
     // 隐藏标题,菜单
-    hideTitleAndMenu() {
+    hideTitleAndMenu () {
       this.setMenuVisible(false)
       this.setSettingVisible(-1)
       this.setFontFamilyVisible(false)

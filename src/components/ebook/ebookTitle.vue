@@ -27,7 +27,7 @@
     mixins: [ebookMixin],
     methods: {
       back () {
-        console.log('back click')
+        this.$router.go(-1)
       }
     }
   }
