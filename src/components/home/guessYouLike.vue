@@ -17,7 +17,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import titleView from './title'
+  import titleView from './homeTitle'
   import { realpx } from '../../utils/book'
   import { homeMixin } from '../../utils/mixin'
 

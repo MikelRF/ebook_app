@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="toast-bg" v-show="visible">
+    <div class="toast-bg" v-if="visible">
       <div class="toast-wrapper">
         <div class="toast" v-html="text"></div>
       </div>
@@ -10,6 +10,7 @@
 
 <script>
   export default {
+    name: 'toast',
     props: {
       text: [String, Number],
       timeout: {
@@ -59,10 +60,10 @@
       line-height: px2rem(20);
       padding: px2rem(10) px2rem(20);
       box-sizing: border-box;
-      background: #ccc;
+      background: white;
+      color: #5e6369;
       border-radius: px2rem(10);
       font-size: px2rem(14);
-      color: white;
       .toast {
         text-align: center;
         word-break: break-all;

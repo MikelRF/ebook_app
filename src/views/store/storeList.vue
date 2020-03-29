@@ -19,8 +19,8 @@
   import Scroll from '../../components/common/scroll'
   import Featured from '../../components/home/featured'
   import { realpx } from '../../utils/book'
-  import { list } from '../../api/home'
-  import { categoryList, categoryText } from '../../utils/home'
+  import { list } from '../../api/store'
+  import { categoryList, categoryText } from '../../utils/store'
 
   export default {
     components: {
@@ -70,12 +70,13 @@
           this.total = response.data.total
           const category = this.$route.query.category
           const keyword = this.$route.query.keyword
+          // 分类查
           if (category) {
             const key = Object.keys(this.list).filter(item => item === category)[0]
             const data = this.list[key]
             this.list = {}
             this.list[key] = data
-          } else if (keyword) {
+          } else if (keyword) { // 关键字查
             Object.keys(this.list).filter(key => {
               this.list[key] = this.list[key].filter(book => book.fileName.indexOf(keyword) >= 0)
               return this.list[key].length > 0

@@ -15,14 +15,13 @@
         </div>
       </div>
     </div>
-    <div class="line"></div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import titleView from './title'
+  import titleView from './homeTitle'
   import { realpx } from '../../utils/book'
-  import { categoryText } from '../../utils/home'
+  import { categoryText } from '../../utils/store'
   import { homeMixin } from '../../utils/mixin'
 
   export default {
@@ -108,10 +107,6 @@
           }
         }
       }
-    }
-    .line {
-      margin-top: px2rem(15);
-      border: solid px2rem(1) #eee;
     }
   }
 </style>

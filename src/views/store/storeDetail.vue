@@ -78,7 +78,7 @@
   import bookInfo from '../../components/detail/bookInfo'
   import scroll from '../../components/common/scroll'
   import toast from '../../components/common/toast'
-  import { detail } from '../../api/home'
+  import { detail } from '../../api/store'
   import { px2rem, realpx } from '../../utils/book'
   import Epub from 'epubjs'
 

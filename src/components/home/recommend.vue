@@ -17,7 +17,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import titleView from './title'
+  import titleView from './homeTitle'
   import { homeMixin } from '../../utils/mixin'
 
   export default {

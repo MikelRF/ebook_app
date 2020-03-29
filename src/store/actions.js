@@ -1,4 +1,5 @@
 const actions = {
+  // book
   // 电子书动态路由，获取路径
   setFileName: ({ commit }, fileName) => {
     return commit('SET_FILENAME', fileName)
@@ -60,11 +61,31 @@ const actions = {
   setOffsetY: ({ commit }, offsetY) => {
     return commit('SET_OFFSETY', offsetY)
   },
+  // home
   setRandomBookVisible: ({ commit }, visible) => {
     return commit('SET_RANDOM_BOOK_VISIBLE', visible)
   },
   setRandomBook: ({ commit }, book) => {
     return commit('SET_RANDOM_BOOK', book)
+  },
+  // shelf
+  setIsEditMode({ commit }, isEditMode) {
+    return commit('SET_IS_EDIT_MODE', isEditMode)
+  },
+  setShelfList({ commit }, list) {
+    return commit('SET_SHELF_LIST', list)
+  },
+  setShelfSelected({ commit }, selected) {
+    return commit('SET_SHELF_SELECTED', selected)
+  },
+  setShelfTitleVisible({ commit }, visible) {
+    return commit('SET_SHELF_TITLE_VISIBLE', visible)
+  },
+  setShelfCategory({ commit }, category) {
+    return commit('SET_SHELF_CATEGORY', category)
+  },
+  setCurrentType({ commit }, type) {
+    return commit('SET_CURRENT_TYPE', type)
   }
 }
 

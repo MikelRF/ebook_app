@@ -21,7 +21,7 @@
 
 <script>
   import { homeMixin } from '../../utils/mixin'
-  import { categoryText } from '../../utils/home'
+  import { categoryText } from '../../utils/store'
 
   export default {
     name: 'randomBook',

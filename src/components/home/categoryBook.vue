@@ -16,8 +16,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import titleView from './title'
-  import { categoryText, getCategoryName } from '../../utils/home'
+  import titleView from './homeTitle'
+  import { categoryText, getCategoryName } from '../../utils/store'
   import { homeMixin } from '../../utils/mixin'
 
   export default {

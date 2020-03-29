@@ -31,12 +31,14 @@ export function saveHome(home) {
   return setLocalStorage('home', home, 1800)
 }
 
-export function getLocale() {
-  return getLocalStorage('locale')
+// 缓存书架
+export function saveBookShelf(shelf) {
+  return setLocalStorage('shelf', shelf)
 }
 
-export function saveLocale(locale) {
-  return setLocalStorage('locale', locale)
+// 获取书架
+export function getBookShelf() {
+  return getLocalStorage('shelf')
 }
 
 // 获取阅读位置

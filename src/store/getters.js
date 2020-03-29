@@ -1,4 +1,5 @@
-const book = {
+const getters = {
+  // book
   fileName: state => state.book.fileName,
   menuVisible: state => state.book.menuVisible,
   settingVisible: state => state.book.settingVisible,
@@ -19,8 +20,16 @@ const book = {
   offsetY: state => state.book.offsetY,
   isBookmark: state => state.book.isBookmark,
   speakingIconBottom: state => state.book.speakingIconBottom,
+  // home
   randomBookVisible: state => state.home.randomBookVisible,
-  randomBook: state => state.home.randomBook
+  randomBook: state => state.home.randomBook,
+  // shelf
+  isEditMode: state => state.shelf.isEditMode,
+  shelfList: state => state.shelf.shelfList,
+  shelfSelected: state => state.shelf.shelfSelected,
+  shelfTitleVisible: state => state.shelf.shelfTitleVisible,
+  shelfCategory: state => state.shelf.shelfCategory,
+  currentType: state => state.shelf.currentType
 }
 
-export default book
+export default getters

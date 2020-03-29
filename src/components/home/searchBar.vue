@@ -10,8 +10,10 @@
         </div>
       </div>
     </transition>
-    <div class="title-icon-back-wrapper" :class="{'hide-title': !titleVisible}" @click="back">
-      <span class="icon-back"></span>
+    <div class="title-icon-shelf-wrapper"
+         :class="{'hide-title': !titleVisible}"
+         @click="showShelf">
+      <span class="icon-shelf icon"></span>
     </div>
     <div class="search-bar-input-wrapper" :class="{'hide-title': !titleVisible}">
       <div class="search-bar-blank" :class="{'hide-title': !titleVisible}"></div>
@@ -20,7 +22,8 @@
         <input class="input"
                type="text" placeholder="计算机科学与软件工程"
                v-model="searchText"
-               @click="search">
+               @click="hideTitle"
+               @keyup.enter="search">
       </div>
     </div>
   </div>
@@ -28,7 +31,7 @@
 
 <script>
   import { homeMixin } from '../../utils/mixin'
-  import { home } from '../../api/home'
+  import { home } from '../../api/store'
 
   export default {
     name: 'searchBar',
@@ -52,6 +55,9 @@
       }
     },
     methods: {
+      showShelf() {
+        this.$router.push('/store/shelf')
+      },
       showRandomBook () {
         this.setRandomBookVisible(true)
         home().then(response => {
@@ -76,7 +82,12 @@
         this.shadowVisible = true
       },
       search () {
-        this.hideTitle()
+        this.$router.push({
+          path: '/store/list',
+          query: {
+            keyword: this.searchText
+          }
+        })
       },
       back () {
         if (this.offsetY > 0) {
@@ -129,7 +140,7 @@
       }
     }
 
-    .title-icon-back-wrapper {
+    .title-icon-shelf-wrapper {
       position: absolute;
       left: px2rem(15);
       top: 0;
@@ -140,11 +151,6 @@
 
       &.hide-title {
         height: px2rem(52);
-      }
-
-      .icon-back {
-        color: #666;
-        font-size: px2rem(16);
       }
     }
 

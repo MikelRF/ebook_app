@@ -28,7 +28,7 @@
   import Recommend from '../../components/home/recommend'
   import Featured from '../../components/home/featured'
   import { homeMixin } from '../../utils/mixin'
-  import { home } from '../../api/home'
+  import { home } from '../../api/store'
   import Category from '../../components/home/category'
   import CategoryBook from '../../components/home/categoryBook'
 
