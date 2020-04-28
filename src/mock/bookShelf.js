@@ -12,7 +12,7 @@ module.exports = {
     language: 'en',
     rootFile: 'OEBPS/content.opf',
     selected: false,
-    cache: true,
+    cache: false,
     haveRead: 0,
     type: 1
   }, {

@@ -1,3 +1,9 @@
+import { saveBookShelf, getBookShelf, getLocalStorage } from './LocalStorage'
+
+export function backToUpLevel (vue) {
+  vue.$router.go(-1)
+}
+
 export const categoryList = {
   ComputerScience: 1,
   SocialSciences: 2,
@@ -147,4 +153,73 @@ export function gotoBookDetail (vue, book) {
       category: book.categoryText
     }
   })
+}
+
+export function computedId (list) {
+  return list.map((book, index) => {
+    if (book.type !== 3) {
+      book.id = index + 1 // 书架id
+      if (book.itemList) {
+        // 当前图书是分组
+        book.itemList = computedId(book.itemList)
+      }
+    }
+    return book
+  })
+}
+
+export function addToShelf (book) {
+  let shelfList = getBookShelf(sessionStorage.getItem('userName'))
+  if (!shelfList) {
+    shelfList = []
+  } else {
+    shelfList = removeAddFromShelf(shelfList)
+  }
+  book.type = 1
+  shelfList.push(book)
+  shelfList = computedId(shelfList)
+  shelfList = appendAddToShelf(shelfList)
+  saveBookShelf(sessionStorage.getItem('userName'), shelfList)
+}
+
+export function removeFromBookShelf (book) {
+  return getBookShelf(sessionStorage.getItem('userName')).filter(item => {
+    if (item.itemList) {
+      item.itemList = item.itemList.filter(subBook => subBook.fileName !== book.fileName)
+    }
+    return book.fileName !== item.fileName
+  })
+}
+
+export function flatBookList (bookList) {
+  if (bookList) {
+    let orgBookList = bookList.filter(item => {
+      return item.type !== 3
+    })
+    const categoryList = bookList.filter(item => {
+      return item.type === 2
+    })
+    categoryList.forEach(item => {
+      const index = orgBookList.findIndex(v => {
+        return v.id === item.id
+      })
+      if (item.itemList) {
+        item.itemList.forEach(subItem => {
+          orgBookList.splice(index, 0, subItem)
+        })
+      }
+    })
+    orgBookList.forEach((item, index) => {
+      item.id = index + 1
+    })
+    orgBookList = orgBookList.filter(item => item.type !== 2)
+    return orgBookList
+  } else {
+    return []
+  }
+}
+
+export function findBook (fileName) {
+  const bookList = getLocalStorage('shelf')
+  return flatBookList(bookList).find(item => item.fileName === fileName)
 }

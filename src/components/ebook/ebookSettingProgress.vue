@@ -4,7 +4,7 @@
       <div class="setting-progress">
         <div class="progress-wrapper">
           <div class="progress-icon-wrapper">
-            <span class="icon-back" @click="prevSection()"></span>
+            <span class="icon-back" @click="prevSection($event.target.value)"></span>
           </div>
           <input class="progress" type="range"
                  max="100"
@@ -29,12 +29,13 @@
 </template>
 
 <script>
-  import { ebookMixin } from '../../utils/mixin'
-  import { saveProgress } from '../../utils/localStorage'
+  import { ebookMixin, userMixin } from '../../utils/mixin'
+  import { saveProgress } from '../../utils/LocalStorage'
   export default {
     name: 'ebookSettingProgress',
-    mixins: [ebookMixin],
+    mixins: [ebookMixin, userMixin],
     methods: {
+      // TODO 切换章节缓存没有更改
       // 上一章
       prevSection() {
         if (this.section > 0 && this.bookAvailable) {
@@ -47,10 +48,8 @@
       // 下一章
       nextSection() {
         if (this.currentBook.spine.length - 1 > this.section && this.bookAvailable) {
-          // this.isProgressLoading = true
           this.setSection(this.section + 1).then(() => {
             this.displaySection(() => {
-              // this.isProgressLoading = false
             })
           })
         }
@@ -73,7 +72,7 @@
         this.setProgress(progress).then(() => {
           this.displayProgress() // 显示指定位置的文章内容
         })
-        saveProgress(this.fileName, progress)
+        saveProgress(this.userStorage, progress)
       },
       // 拖进度条显示指定位置
       displayProgress() {

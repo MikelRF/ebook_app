@@ -86,6 +86,13 @@ const actions = {
   },
   setCurrentType({ commit }, type) {
     return commit('SET_CURRENT_TYPE', type)
+  },
+  // user
+  setUserName({ commit }, type) {
+    return commit('SET_USER_NAME', type)
+  },
+  setUserStorage({ commit }, type) {
+    return commit('SET_USER_STORAGE', type)
   }
 }
 

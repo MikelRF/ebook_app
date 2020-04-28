@@ -14,6 +14,8 @@
 </template>
 
 <script>
+  import { backToUpLevel } from '../../utils/store'
+
   export default {
     props: {
       title: String,
@@ -38,7 +40,7 @@
         this.ifHideShadow = true
       },
       back() {
-        this.$emit('back')
+        backToUpLevel(this)
       }
     }
   }

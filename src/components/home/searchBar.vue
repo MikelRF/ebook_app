@@ -20,7 +20,8 @@
       <div class="search-bar-input">
         <div class="icon-search"></div>
         <input class="input"
-               type="text" placeholder="计算机科学与软件工程"
+               type="text"
+               placeholder="计算机科学与软件工程"
                v-model="searchText"
                @click="hideTitle"
                @keyup.enter="search">
@@ -63,9 +64,7 @@
         home().then(response => {
           if (response && response.status === 200) {
             const data = response.data
-            const randomIndex = Math.floor(Math.random() * data.random.length)
-            this.setRandomBook(data.random[randomIndex])
-            console.log('showRandomBook', this.randomBook)
+            this.setRandomBook(data.randomBook[0])
           }
         })
       },

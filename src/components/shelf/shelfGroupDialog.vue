@@ -174,7 +174,7 @@
         }
       },
       onComplete () {
-        saveBookShelf(this.shelfList) // 缓存
+        saveBookShelf(sessionStorage.getItem('userName'), this.shelfList) // 缓存
         this.hide()
         this.setIsEditMode(false)
       }

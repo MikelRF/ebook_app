@@ -1,8 +1,12 @@
 <template>
   <transition name="fade">
-    <div class="toast-bg" v-if="visible">
-      <div class="toast-wrapper">
-        <div class="toast" v-html="text"></div>
+    <div class="toast-bg-wrapper"
+         @click.prevent
+         v-show="visible">
+      <div class="toast-bg">
+        <div class="toast-wrapper">
+          <div class="toast" v-html="showText"></div>
+        </div>
       </div>
     </div>
   </transition>
@@ -15,19 +19,21 @@
       text: [String, Number],
       timeout: {
         type: Number,
-        default: 1500
+        default: 1000
       }
     },
-    data() {
+    data () {
       return {
-        visible: false
+        visible: false,
+        showText: ''
       }
     },
     methods: {
-      hide() {
+      hide () {
         this.visible = false
       },
-      show() {
+      show () {
+        this.updateText(this.text)
         clearTimeout(this.task)
         this.task = null
         this.visible = true
@@ -35,10 +41,13 @@
           this.visible = false
         }, this.timeout)
       },
-      continueShow() {
+      continueShow () {
         clearTimeout(this.task)
         this.task = null
         this.visible = true
+      },
+      updateText (text) {
+        this.showText = text
       }
     }
   }
@@ -47,26 +56,38 @@
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
 
-  .toast-bg {
+  .toast-bg-wrapper {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: 0 0 0 -50%;
-    z-index: 2500;
+    left: 0;
+    top: 0;
+    height: 100%;
     width: 100%;
-    @include center;
-    .toast-wrapper {
-      width: 60%;
-      line-height: px2rem(20);
-      padding: px2rem(10) px2rem(20);
-      box-sizing: border-box;
-      background: white;
-      color: #5e6369;
-      border-radius: px2rem(10);
-      font-size: px2rem(14);
-      .toast {
-        text-align: center;
-        word-break: break-all;
+    background: transparent;
+    z-index: 2500;
+
+    .toast-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: 0 0 0 -50%;
+      z-index: 2500;
+      width: 100%;
+      @include center;
+
+      .toast-wrapper {
+        width: 60%;
+        line-height: px2rem(20);
+        padding: px2rem(10) px2rem(20);
+        box-sizing: border-box;
+        background: whitesmoke;
+        color: #5e6369;
+        border-radius: px2rem(10);
+        font-size: px2rem(14);
+
+        .toast {
+          text-align: center;
+          word-break: break-all;
+        }
       }
     }
   }

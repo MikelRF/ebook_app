@@ -32,6 +32,13 @@ $ratio: 375 / 10;
   align-items: flex-start;
 }
 
+//居左下
+@mixin bottomLeft {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
 //省略多余字
 @mixin ellipsis {
   text-overflow: ellipsis; //多出的用省略号
@@ -78,13 +85,46 @@ $ratio: 375 / 10;
   align-items: flex-start;
 }
 
+@mixin scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@mixin leftBottom {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+@mixin scale {
+  animation: scale .3s ease-in both;
+  @keyframes scale {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
 .icon {
   color: #666;
   font-size: px2rem(16);
 }
 
+.icon-home {
+  font-size: px2rem(16);
+}
+
 .title {
   color: #666;
-  font-size: px2rem(16);
+  font-size: px2rem(14);
   font-weight: bold;
 }

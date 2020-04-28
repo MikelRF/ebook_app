@@ -1,0 +1,101 @@
+<template>
+  <div class="bottom-wrapper" :class="{'hide-play': !showPlay}" v-if="showPlay">
+    <div class="bottom-playing-wrapper" @click.stop.prevent="onPlayingCardClick">
+      <div class="bottom-playing-left">
+        <!--播放-->
+        <div class="icon-play-wrapper" @click.stop.prevent="togglePlay">
+          <span class="icon-play_go" v-if="!isPlaying"></span>
+          <span class="icon-play_pause" v-else></span>
+        </div>
+      </div>
+      <div class="bottom-playing-right">
+        <div class="bottom-playing-chapter-text">
+          <span class="chapter-label">{{chapter ? chapter.label : ''}}</span>
+          <span class="bottom-playing-page-text" v-if="currentSectionIndex && currentSectionTotal">( {{currentSectionIndex}} / {{currentSectionTotal}} )</span>
+        </div>
+        <div class="bottom-playing-page-text">{{playInfo ? playInfo.currentMinute : '00'}}:{{playInfo ? playInfo.currentSecond : '00'}} / {{playInfo ? playInfo.totalMinute : '00'}}:{{playInfo ? playInfo.totalSecond : '00'}}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    props: {
+      chapter: Object, // 章节
+      currentSectionIndex: Number, // 当前章节数
+      currentSectionTotal: Number, // 总章节数
+      showPlay: Boolean, // 是否显示面板
+      isPlaying: Boolean, // 是否播放
+      playInfo: Object // 播放信息
+    },
+    methods: {
+      togglePlay() {
+        this.$parent.togglePlay() // 调用父组件togglePlay
+      },
+      onPlayingCardClick() {
+        this.$emit('onPlayingCardClick')
+      }
+    }
+  }
+</script>
+
+<style lang="scss" rel="stylesheet/scss" scoped>
+  @import "../../assets/styles/global";
+
+  .bottom-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 110;
+    width: 100%;
+    background: white;
+    box-shadow: 0 px2rem(-2) px2rem(2) 0 rgba(0, 0, 0, .1);
+    &.hide-play {
+      height: px2rem(52);
+    }
+    .bottom-playing-wrapper {
+      display: flex;
+      width: 100%;
+      height: px2rem(64);
+      .bottom-playing-left {
+        flex: 0 0 px2rem(70);
+        width: px2rem(70);
+        @include center;
+        .icon-play-wrapper {
+          flex: 0 0 px2rem(100);
+          @include center;
+          &:active {
+            opacity: .5;
+          }
+          .icon-play_go {
+            font-size: px2rem(40);
+            color: $color-blue;
+          }
+          .icon-play_pause {
+            font-size: px2rem(40);
+            color: $color-blue;
+          }
+        }
+      }
+      .bottom-playing-right {
+        flex: 1;
+        padding-right: px2rem(15);
+        box-sizing: border-box;
+        @include columnLeft;
+        .bottom-playing-chapter-text {
+          max-width: px2rem(305);
+          color: #333;
+          font-size: px2rem(16);
+          line-height: px2rem(19);
+          @include ellipsis;
+        }
+        .bottom-playing-page-text {
+          color: #666;
+          font-size: px2rem(10);
+          margin-top: px2rem(5);
+        }
+      }
+    }
+  }
+</style>

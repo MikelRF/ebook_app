@@ -1,14 +1,18 @@
 <template>
   <div class="store-shelf">
-    <shelf-title></shelf-title>
+    <shelf-title :title="'书架'" :parentName="'storeShelf'"></shelf-title>
     <scroll class="store-shelf-scroll-wrapper"
             :top="0"
             :bottom="scrollBottom"
             @onScroll="onScroll"
             ref="scroll">
-      <shelf-search></shelf-search>
-      <shelf-list></shelf-list>
+      <shelf-list :data="shelfList"></shelf-list>
     </scroll>
+    <transition name="slide-up">
+      <div class="exit-wrapper" @click="exit" v-show="!isEditMode">
+        <div class="exit">注销</div>
+      </div>
+    </transition>
     <shelf-footer></shelf-footer>
   </div>
 </template>
@@ -16,12 +20,9 @@
 <script>
   import shelfTitle from '../../components/shelf/shelfTitle'
   import Scroll from '../../components/common/scroll'
-  import ShelfSearch from '../../components/shelf/shelfSearch'
   import { shelfMixin } from '../../utils/mixin'
-  import { shelf } from '../../api/store'
-  import ShelfList from '../../components/shelf/shelfList'
-  import { appendAddToShelf } from '../../utils/store'
   import ShelfFooter from '../../components/shelf/shelfFooter'
+  import ShelfList from '../../components/shelf/shelfList'
 
   export default {
     name: 'storeShelf',
@@ -29,7 +30,6 @@
     components: {
       ShelfFooter,
       ShelfList,
-      ShelfSearch,
       Scroll,
       shelfTitle
     },
@@ -53,18 +53,21 @@
       onScroll (offsetY) {
         this.setOffsetY(offsetY)
       },
-      getShelfList () {
-        shelf().then(response => {
-          if (response.status === 200 && response.data && response.data.bookList) {
-            const bookList = response.data.bookList // 获取所有书架图书
-            this.setShelfList(appendAddToShelf(bookList)) // 在所有搜藏书架中最后一个加入“添加图书”
-          }
+      exit () {
+        sessionStorage.setItem('userName', '')
+        sessionStorage.setItem('isLogin', '')
+        this.$router.push({
+          path: '/login'
         })
       }
     },
     mounted () {
       // 获取书架列表数据
       this.getShelfList()
+      // 初始化书架分类数据
+      this.setShelfCategory([])
+      // 设置vuex的currentType为1，表示当前位于书架，影响ShelfTitle状态
+      this.setCurrentType(1)
     }
   }
 </script>
@@ -84,6 +87,21 @@
       top: 0;
       left: 0;
       z-index: 101;
+    }
+
+    .exit-wrapper {
+      position: absolute;
+      bottom: 0;
+      z-index: 102;
+      background: indianred;
+      width: 100%;
+      height: px2rem(40);
+      @include center;
+
+      .exit {
+        font-size: px2rem(18);
+        color: white;
+      }
     }
   }
 </style>

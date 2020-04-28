@@ -29,7 +29,10 @@ const getters = {
   shelfSelected: state => state.shelf.shelfSelected,
   shelfTitleVisible: state => state.shelf.shelfTitleVisible,
   shelfCategory: state => state.shelf.shelfCategory,
-  currentType: state => state.shelf.currentType
+  currentType: state => state.shelf.currentType,
+  // userInfo
+  userName: state => state.user.userName,
+  userStorage: state => state.user.userStorage
 }
 
 export default getters

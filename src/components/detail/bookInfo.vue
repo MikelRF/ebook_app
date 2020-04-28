@@ -1,7 +1,11 @@
 <template>
   <div class="cover-title-wrapper">
     <div class="cover-title-left-wrapper">
-      <img class="cover-img" :src="cover">
+      <img class="cover-img" v-lazy="cover" :key="cover">
+      <div class="score">
+        <div class="score-text1" v-html="'评分:&nbsp&nbsp'"></div>
+        <div class="score-text2">{{currentScore}}</div>
+      </div>
     </div>
     <div class="cover-title-right-wrapper">
       <div class="detail-cover-title-wrapper">
@@ -23,7 +27,13 @@
       cover: String,
       title: String,
       author: String,
-      desc: String
+      desc: String,
+      currentScore: Number
+    },
+    data() {
+      return {
+        score: '评分:  ' + this.currentScore
+      }
     }
   }
 </script>
@@ -34,16 +44,29 @@
     display: flex;
     width: 100%;
     padding: px2rem(10) 0;
-    border-bottom: px2rem(1) solid #eee;
     box-sizing: border-box;
     .cover-title-left-wrapper {
       flex: 0 0 px2rem(103);
       padding: px2rem(10) 0 px2rem(10) px2rem(15);
       box-sizing: border-box;
-      @include top;
+      @include left;
+      display: block;
       .cover-img {
         width: px2rem(103);
         height: px2rem(146);
+      }
+      .score {
+        width: 100%;
+        height: px2rem(50);
+        @include bottomLeft
+        .score-text1 {
+          font-size: px2rem(16);
+          color: #346cb9;
+        }
+        .score-text2 {
+          font-size: px2rem(20);
+          font-weight: bold;
+        }
       }
     }
     .cover-title-right-wrapper {

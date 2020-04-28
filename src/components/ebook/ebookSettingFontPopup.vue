@@ -22,12 +22,12 @@
 </template>
 
 <script>
-  import { ebookMixin } from '../../utils/mixin'
+  import { ebookMixin, userMixin } from '../../utils/mixin'
   import { FONT_FAMILY } from '../../utils/book'
-  import { saveFontFamily } from '../../utils/localStorage'
+  import { saveFontFamily } from '../../utils/LocalStorage'
   export default {
     name: 'EbookSettingFontPopup',
-    mixins: [ebookMixin],
+    mixins: [ebookMixin, userMixin],
     data () {
       return {
         fontFamilyList: FONT_FAMILY
@@ -44,7 +44,7 @@
       },
       setFontFamily (font) {
         this.setDefaultFontFamily(font)
-        saveFontFamily(this.fileName, this.defaultFontFamily)
+        saveFontFamily(this.userStorage, this.defaultFontFamily)
         if (font === 'Default') {
           this.currentBook.rendition.themes.font('Times New Roman')
         } else {

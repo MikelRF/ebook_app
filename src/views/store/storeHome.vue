@@ -4,7 +4,8 @@
     <random-book></random-book>
     <scroll :top="scrollTop" @onScroll="onscroll" ref="scroll">
       <div class="banner-wrapper">
-        <div class="banner-img" :style="{backgroundImage:`url('${banner}')`}"></div>
+<!--        <div class="banner-img" :style="{backgroundImage:`url('${banner}')`}"></div>-->
+        <banner class="banner-img" :bannerList="banner"></banner>
       </div>
       <guess-you-like :data="guessYouLike"></guess-you-like>
       <recommend :data="recommend"></recommend>
@@ -27,15 +28,17 @@
   import guessYouLike from '../../components/home/guessYouLike'
   import Recommend from '../../components/home/recommend'
   import Featured from '../../components/home/featured'
-  import { homeMixin } from '../../utils/mixin'
+  import { homeMixin, userMixin } from '../../utils/mixin'
   import { home } from '../../api/store'
   import Category from '../../components/home/category'
   import CategoryBook from '../../components/home/categoryBook'
+  import Banner from '../../components/common/banner'
 
   export default {
     name: 'store-home',
-    mixins: [homeMixin],
+    mixins: [homeMixin, userMixin],
     components: {
+      Banner,
       CategoryBook,
       Category,
       Featured,
@@ -45,10 +48,13 @@
       randomBook,
       guessYouLike
     },
+    props: {
+      user: Object
+    },
     data () {
       return {
         scrollTop: 94,
-        banner: null,
+        banner: [],
         guessYouLike: null,
         recommend: null,
         featured: null,
@@ -95,12 +101,12 @@
       box-sizing: border-box;
 
       .banner-img {
-        width: 100%;
         height: px2rem(150);
         background-repeat: no-repeat;
         background-size: 100% 100%;
       }
     }
+
     .line {
       margin-top: px2rem(15);
       border: solid px2rem(1) #eee;

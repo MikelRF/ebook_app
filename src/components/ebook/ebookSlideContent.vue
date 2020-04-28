@@ -24,7 +24,7 @@
     <!--基本信息-->
     <div class="slide-contents-book-wrapper" v-show="!searchVisible">
       <div class="slide-contents-book-img-wrapper">
-        <img :src="cover" class="slide-contents-book-img">
+        <img v-lazy="cover" :key="cover" class="slide-contents-book-img">
       </div>
       <div class="slide-contents-book-info-wrapper">
         <div class="slide-contents-book-title">
@@ -114,6 +114,7 @@
         this.searchVisible = true
       },
       search() {
+        // 搜索框中有内容
         if (this.searchText && this.searchText.length > 0) {
           this.doSearch(this.searchText).then(list => {
             if (list.length) {
@@ -127,8 +128,7 @@
               })
             } else {
               this.result = false
-              console.log('meiyou')
-              this.searchList = ['没有']
+              // this.searchList = ['没有']
             }
           })
         }

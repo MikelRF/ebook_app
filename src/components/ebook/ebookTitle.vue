@@ -7,13 +7,7 @@
       </div>
       <div class="right">
         <div class="icon-wrapper">
-          <span class="icon-shelf"></span>
-        </div>
-        <div class="icon-wrapper">
-          <span class="icon-cart"></span>
-        </div>
-        <div class="icon-wrapper">
-          <span class="icon-more"></span>
+          <span class="icon-shelf" @click="goShelf"></span>
         </div>
       </div>
     </div>
@@ -22,12 +16,18 @@
 
 <script>
   import { ebookMixin } from '../../utils/mixin'
+  import { backToUpLevel } from '../../utils/store'
   export default {
     name: 'ebookTitle',
     mixins: [ebookMixin],
     methods: {
       back () {
-        this.$router.go(-1)
+        backToUpLevel(this)
+      },
+      goShelf() {
+        this.$router.push({
+          path: '/store/shelf'
+        })
       }
     }
   }
@@ -55,14 +55,14 @@
       display: flex;
       justify-content: flex-end;
       .icon-wrapper{
-        flex: 0 0 px2rem(40);
+        flex: 0 0 px2rem(50);
         @include center;
         .icon-shelf{
-          font-size: px2rem(22);
+          font-size: px2rem(20);
         }
-        .icon-cart{
-          font-size: px2rem(22);
-        }
+        /*.icon-cart{*/
+        /*  font-size: px2rem(22);*/
+        /*}*/
       }
     }
   }

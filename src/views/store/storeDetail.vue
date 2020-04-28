@@ -1,5 +1,6 @@
 <template>
   <div class="book-detail">
+    <router-view></router-view>
     <detail-title @back="back"
                   :showShelf="true"
                   ref="title"></detail-title>
@@ -11,7 +12,10 @@
       <book-info :cover="cover"
                  :title="title"
                  :author="author"
-                 :desc="desc"></book-info>
+                 :desc="desc"
+                 :currentScore="currentScore"></book-info>
+      <commentCard :commentData="commentData"
+                   :title="title"></commentCard>
       <div class="book-detail-content-wrapper">
         <div class="book-detail-content-title">版权</div>
         <div class="book-detail-content-list-wrapper">
@@ -63,10 +67,10 @@
     </scroll>
     <div class="bottom-wrapper">
       <div class="bottom-btn" @click.stop.prevent="readBook()">阅读</div>
-      <div class="bottom-btn" @click.stop.prevent="trialListening()">听书</div>
+      <div class="bottom-btn" @click.stop.prevent="commentWrite()">写评论</div>
       <div class="bottom-btn" @click.stop.prevent="addOrRemoveShelf()">
-        <span class="icon-check" v-if="inBookShelf"></span>
-        {{inBookShelf ? '已加入书架' : '加入书架'}}
+        <!--        <span class="icon-check" v-if="inBookShelf"></span>-->
+        {{inBookShelf ? '移出书架' : '加入书架'}}
       </div>
     </div>
     <toast :text="toastText" ref="toast"></toast>
@@ -78,19 +82,29 @@
   import bookInfo from '../../components/detail/bookInfo'
   import scroll from '../../components/common/scroll'
   import toast from '../../components/common/toast'
-  import { detail } from '../../api/store'
+  import { commentText, detail, getScore } from '../../api/store'
   import { px2rem, realpx } from '../../utils/book'
+  import { saveBookShelf, getBookShelf } from '../../utils/LocalStorage'
+  import { backToUpLevel, removeFromBookShelf, addToShelf } from '../../utils/store'
   import Epub from 'epubjs'
+  import { shelfMixin } from '../../utils/mixin'
+  import { getLocalForage } from '../../utils/localForage'
+  import commentCard from '../../components/detail/commentCard'
 
   global.ePub = Epub
 
   export default {
     components: {
+      commentCard,
       detailTitle,
       bookInfo,
       scroll,
       toast
     },
+    activated () {
+      location.reload()
+    },
+    mixins: [shelfMixin],
     computed: {
       desc () {
         if (this.description) {
@@ -122,10 +136,12 @@
         return this.metadata ? this.metadata.creator : ''
       },
       inBookShelf () {
-        if (this.bookItem && this.bookShelf) {
+        if (this.bookItem && this.shelfList) {
+          // 定义一个自执行函数，将书架转为一维数组结构，并且只保留type为1的数据（type=1的为电子书）
           const flatShelf = (function flatten (arr) {
             return [].concat(...arr.map(v => v.itemList ? [v, ...flatten(v.itemList)] : v))
-          })(this.bookShelf).filter(item => item.type === 1)
+          })(this.shelfList).filter(item => item.type === 1)
+          // 查找当前电子书是否存在于书架
           const book = flatShelf.filter(item => item.fileName === this.bookItem.fileName)
           return book && book.length > 0
         } else {
@@ -148,26 +164,80 @@
         toastText: '',
         trialText: null,
         categoryText: null,
-        opf: null
+        opf: null,
+        commentData: null, // 评论
+        currentScore: 0
       }
     },
     methods: {
       addOrRemoveShelf () {
-      },
-      showToast (text) {
-        this.toastText = text
-        this.$refs.toast.show()
+        if (sessionStorage.getItem('isLogin')) {
+          // 如果电子书存在于书架，则从书架中移除电子书
+          if (this.inBookShelf) {
+            const list = removeFromBookShelf(this.bookItem)
+            this.setShelfList(list)
+              .then(() => {
+                // 将书架数据保存到LocalStorage
+                saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
+                this.simpleToast('移出书架成功')
+              })
+          } else {
+            // 如果电子书不存在于书架，则添加电子书到书架
+            addToShelf(this.bookItem)
+            this.setShelfList(getBookShelf(sessionStorage.getItem('userName')))
+            this.simpleToast('加入书架成功')
+          }
+        } else {
+          this.$router.push('/login')
+        }
       },
       readBook () {
         this.$router.push({
           path: `/ebook/${this.categoryText}|${this.fileName}`
         })
       },
+      commentWrite () {
+        this.$router.push({
+          path: '/store/detail/commentWrite',
+          query: {
+            title: this.title,
+            currentScore: this.currentScore
+          }
+        })
+      },
+      getCommentText (title) {
+        commentText(title).then(response => {
+          this.commentData = response.data.data
+        })
+      },
       trialListening () {
+        getLocalForage(this.bookItem.fileName, (err, value) => {
+          // 离线
+          if (!err && value && value instanceof Blob) {
+            this.$router.push({
+              path: '/store/speaking',
+              query: {
+                fileName: this.bookItem.fileName
+              }
+            })
+            // 在线
+          } else {
+            this.$router.push({
+              path: '/store/speaking',
+              query: {
+                fileName: this.bookItem.fileName,
+                opf: this.opf
+              }
+            })
+          }
+        })
       },
       read (item) {
         this.$router.push({
-          path: `/ebook/${this.categoryText}|${this.fileName}`
+          path: `/ebook/${this.categoryText}|${this.fileName}`,
+          query: {
+            item: item
+          }
         })
       },
       itemStyle (item) {
@@ -194,6 +264,7 @@
         this.book = new Epub(url)
         this.book.loaded.metadata.then(metadata => {
           this.metadata = metadata
+          this.getCommentText(this.metadata.title)
         })
         this.book.loaded.navigation.then(nav => {
           this.navigation = nav
@@ -231,13 +302,17 @@
               this.opf = `${process.env.VUE_APP_EPUB_OPF_URL}/${this.fileName}/${rootFile}`
               this.parseBook(this.opf)
             } else {
-              this.showToast(response.data.msg)
+              this.simpleToast(response.data.msg)
             }
+          })
+          // 获取评分
+          getScore(this.fileName).then(response => {
+            this.currentScore = response.data.data
           })
         }
       },
       back () {
-        this.$router.go(-1)
+        backToUpLevel(this)
       },
       display (location) {
         if (this.$refs.preview) {
@@ -382,9 +457,9 @@
           color: $color-blue-transparent;
         }
 
-        .icon-check {
-          margin-right: px2rem(5);
-        }
+        /*.icon-check {*/
+        /*  margin-right: px2rem(5);*/
+        /*}*/
       }
 
       &.hide-shadow {

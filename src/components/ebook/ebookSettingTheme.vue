@@ -18,11 +18,11 @@
 </template>
 
 <script>
-  import { ebookMixin } from '../../utils/mixin'
-  import { saveTheme } from '../../utils/localStorage'
+  import { ebookMixin, userMixin } from '../../utils/mixin'
+  import { saveTheme } from '../../utils/LocalStorage'
   export default {
     name: 'ebookSettingTheme',
-    mixins: [ebookMixin],
+    mixins: [ebookMixin, userMixin],
     methods: {
       setTheme(index) {
         const theme = this.themeList[index]
@@ -30,7 +30,7 @@
           this.currentBook.rendition.themes.select(this.defaultTheme) // 切换电子书样式
           this.initGlobalTheme() // 切换全局样式
         })
-        saveTheme(this.fileName, this.defaultTheme) // 切换主题时缓存
+        saveTheme(this.userStorage, this.defaultTheme) // 切换主题时缓存
       }
     }
   }

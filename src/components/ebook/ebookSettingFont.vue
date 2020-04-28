@@ -36,12 +36,12 @@
 </template>
 
 <script>
-  import { ebookMixin } from '../../utils/mixin'
+  import { ebookMixin, userMixin } from '../../utils/mixin'
   import { FONT_SIZE_LIST } from '../../utils/book'
-  import { saveFontSize } from '../../utils/localStorage'
+  import { saveFontSize } from '../../utils/LocalStorage'
   export default {
     name: 'ebookSettingFont',
-    mixins: [ebookMixin],
+    mixins: [ebookMixin, userMixin],
     data () {
       return {
         fontSizeList: FONT_SIZE_LIST
@@ -49,9 +49,8 @@
     },
     methods: {
       setFontSize (fontSize) {
-        console.log(fontSize)
         this.setDefaultFontSize(fontSize)
-        saveFontSize(this.fileName, this.defaultFontSize)
+        saveFontSize(this.userStorage, this.defaultFontSize)
         this.currentBook.rendition.themes.fontSize(fontSize)
       },
       showFontFamilySetting () {

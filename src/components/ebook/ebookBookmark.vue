@@ -15,13 +15,13 @@
 <script>
   import { realpx } from '../../utils/book'
   import bookMark from '../common/bookMark'
-  import { ebookMixin } from '../../utils/mixin'
-  import { getBookmark, saveBookmark } from '../../utils/localStorage'
+  import { ebookMixin, userMixin } from '../../utils/mixin'
+  import { getBookmark, saveBookmark } from '../../utils/LocalStorage'
 
   const BLUE = '#346cbc'
   const WHITE = '#fff'
   export default {
-    mixins: [ebookMixin],
+    mixins: [ebookMixin, userMixin],
     components: {
       bookMark
     },
@@ -42,9 +42,11 @@
     },
     watch: {
       offsetY(v) {
+        // 书籍为加载成功，菜单弹出时， 设置选项弹出时不做操作
         if (!this.bookAvailable || this.menuVisible || this.settingVisible >= 0) {
           return
         }
+        // height = 35px  threshold = 55px
         if (v >= this.height && v < this.threshold) {
           this.beforeThreshold(v)
         } else if (v >= this.threshold) {
@@ -72,31 +74,36 @@
       }
     },
     methods: {
+      // 添加书签
       addBookmark() {
-        this.bookmark = getBookmark(this.fileName)
+        // 获取缓存中的书签
+        this.bookmark = getBookmark(this.userStorage)
         if (!this.bookmark) {
           this.bookmark = []
         }
         const currentLocation = this.currentBook.rendition.currentLocation()
+        console.log(currentLocation)
         const cfibase = currentLocation.start.cfi.replace(/!.*/, '')
         const cfistart = currentLocation.start.cfi.replace(/.*!/, '').replace(/\)$/, '')
         const cfiend = currentLocation.end.cfi.replace(/.*!/, '').replace(/\)$/, '')
         const cfirange = `${cfibase}!,${cfistart},${cfiend})`
         this.currentBook.getRange(cfirange).then(range => {
+          // 清理格式
           const text = range.toString().replace(/\s\s/g, '')
           this.bookmark.push({
             cfi: currentLocation.start.cfi,
             text: text
           })
-          saveBookmark(this.fileName, this.bookmark)
+          saveBookmark(this.userStorage, this.bookmark) // 缓存
         })
       },
+      // 删除书签
       removeBookmark() {
         const currentLocation = this.currentBook.rendition.currentLocation()
         const cfi = currentLocation.start.cfi
-        this.bookmark = getBookmark(this.fileName)
+        this.bookmark = getBookmark(this.userStorage)
         if (this.bookmark) {
-          saveBookmark(this.fileName, this.bookmark.filter(item => item.cfi !== cfi))
+          saveBookmark(this.userStorage, this.bookmark.filter(item => item.cfi !== cfi))
           this.setIsBookmark(false)
         }
       },

@@ -10,6 +10,7 @@
                  type="text"
                  placeholder="搜索"
                  @click="onSearchClick"
+                 @keyup.enter="search"
                  v-model="searchText">
         </div>
         <div class="icon-clear-wrapper"
@@ -76,6 +77,8 @@
       }
     },
     methods: {
+      search() {
+      },
       clearSearchText () {
         this.searchText = ''
       },
@@ -101,7 +104,7 @@
     position: relative;
     z-index: 105;
     width: 100%;
-    height: px2rem(94);
+    height: px2rem(64);
     font-size: px2rem(16);
     background: white;
     box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0, 0, 0, .1);

@@ -3,7 +3,8 @@
     <div class="book-card" v-show="randomBookAnimation">
       <div class="book-card-wrapper">
         <div class="img-wrapper">
-          <img class="img" :src="this.randomBook ? this.randomBook.cover: ''">
+          <img class="img" v-lazy="this.randomBook ? this.randomBook.cover: ''"
+               :key="this.randomBook ? this.randomBook.cover: ''">
         </div>
         <div class="content-wrapper">
           <div class="title">{{this.randomBook ? this.randomBook.title : ''}}</div>
@@ -52,7 +53,7 @@
           return ''
         }
       },
-      readNow() {
+      readNow () {
         this.showBookDetail(this.randomBook)
         this.setRandomBookVisible(false)
       }
@@ -86,16 +87,7 @@
       background: white;
       max-width: px2rem(400);
       animation: scale .3s ease-in both;
-      @keyframes scale {
-        0% {
-          transform: scale(0);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
+      @include scale;
 
       .book-card-wrapper {
         width: 100%;
@@ -161,7 +153,7 @@
     .close-btn-wrapper {
       position: absolute;
       left: 0;
-      bottom: px2rem(30);
+      bottom: px2rem(50);
       z-index: 1100;
       width: 100%;
       @include center;
@@ -170,7 +162,7 @@
         display: inline-block;
         width: px2rem(45);
         height: px2rem(45);
-        font-size: px2rem(30);
+        font-size: px2rem(25);
         color: white;
         background: transparent;
         border-radius: 50%;

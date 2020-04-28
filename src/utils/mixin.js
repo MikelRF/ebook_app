@@ -1,7 +1,22 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, ThemeList } from './book'
-import { saveLocation, getBookmark } from './localStorage'
-import { gotoBookDetail } from './store'
+import { saveLocation, getBookmark, getBookShelf, saveBookShelf } from './LocalStorage'
+import { appendAddToShelf, computedId, gotoBookDetail, removeAddFromShelf } from './store'
+
+export const userMixin = {
+  computed: {
+    ...mapGetters([
+      'userName',
+      'userStorage'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'setUserName',
+      'setUserStorage'
+    ])
+  }
+}
 
 export const shelfMixin = {
   computed: {
@@ -27,6 +42,58 @@ export const shelfMixin = {
     ]),
     showBookDetail (book) {
       gotoBookDetail(this, book)
+    },
+    getShelfList () {
+      let shelfList = getBookShelf(sessionStorage.getItem('userName'))
+      // 无缓存
+      if (!shelfList) {
+        shelfList = appendAddToShelf([])
+        saveBookShelf(sessionStorage.getItem('userName'), shelfList)
+        return this.setShelfList(shelfList)
+      } else {
+        return this.setShelfList(shelfList)
+      }
+    },
+    getCategoryList (title) {
+      this.getShelfList().then(() => {
+        const categoryList = this.shelfList.filter(book => book.type === 2 && book.title === title)[0]
+        this.setShelfCategory(categoryList)
+      })
+    },
+    // 隐藏弹窗
+    hidePopup () {
+      this.popupMenu.hide()
+    },
+    // 创建弹窗选项
+    createPopupBtn (text, onClick, type = 'normal') {
+      return {
+        text: text,
+        type: type,
+        click: onClick
+      }
+    },
+    popupCancelBtn () { // 取消按钮
+      return this.createPopupBtn('取消', () => {
+        this.hidePopup()
+      })
+    },
+    moveOutOfGroup (cb) {
+      // 过滤
+      this.setShelfList(this.shelfList.map(book => {
+        if (book.type === 2 && book.itemList) {
+          // 保留未被选中的图书
+          book.itemList = book.itemList.filter(subBook => !subBook.selected)
+        }
+        return book
+      })).then(() => { // 放回书架页
+        let list = removeAddFromShelf(this.shelfList) // 移出 +
+        list = [].concat(list, ...this.shelfSelected)
+        list = appendAddToShelf(list) // 加上 +
+        list = computedId(list) // 重新计算id
+        this.setShelfList(list)
+        this.simpleToast('成功移出分组')
+        if (cb) cb()
+      })
     }
   }
 }
@@ -130,10 +197,10 @@ export const ebookMixin = {
         const progress = this.currentBook.locations.percentageFromCfi(startCfi)
         this.setProgress(Math.floor(progress * 100))
         this.setSection(currentLocation.start.index)
-        saveLocation(this.fileName, startCfi)
+        saveLocation(this.userStorage, startCfi)
         /* 判断当前页面是否是书签，不是则把Bookmark设为false
       防止将当前页设置为书签后，翻到下一页仍有书签标记 */
-        const bookmark = getBookmark(this.fileName)
+        const bookmark = getBookmark(this.userStorage)
         // console.log(bookmark)
         if (bookmark) {
           if (bookmark.some(item => item.cfi === startCfi)) {

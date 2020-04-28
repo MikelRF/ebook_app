@@ -1,28 +1,51 @@
 <template>
   <div class="shelf-item-book">
-    <img class="shelf-item-book-wrapper" :src="data.cover">
+    <img class="shelf-item-book-cover" v-lazy="data.cover" :key="data.cover">
+    <div class="download-wrapper" v-show="data.cache"></div>
+    <div class="download-icon-wrapper" v-show="data.cache">
+      <span class="icon-download"></span>
+    </div>
   </div>
 </template>
 
 <script>
   export default {
-    name: 'shelfItemImg',
     props: {
       data: Object
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-
   .shelf-item-book {
     width: 100%;
     height: 100%;
-
-    .shelf-item-book-wrapper {
+    .shelf-item-book-cover {
       width: 100%;
       height: 100%;
+    }
+    .download-wrapper {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      border-width: px2rem(15);
+      border-style: solid;
+      border-color: transparent transparent rgba(0, 0, 0, .4) rgba(0, 0, 0, .4);
+    }
+    .download-icon-wrapper {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: px2rem(30);
+      height: px2rem(30);
+      padding-bottom: px2rem(2);
+      padding-left: px2rem(3);
+      @include leftBottom;
+      .icon-download {
+        font-size: px2rem(14);
+        color: white;
+      }
     }
   }
 </style>

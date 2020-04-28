@@ -1,0 +1,95 @@
+@import "./mixin";
+.login-wrapper {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  background: whitesmoke;
+  @include columnTop;
+
+  .form-wrapper {
+    top: px2rem(200);
+    position: relative;
+    width: 80%;
+    /*height: px2rem(260);*/
+    box-sizing: border-box;
+    border-radius: px2rem(15);
+    background: white;
+    box-shadow: px2rem(1) px2rem(2) px2rem(6) rgba(0, 0, 0, .20);
+    max-width: px2rem(400);
+    @include scale.login-text {
+      margin: px2rem(15) 0 px2rem(20) 0;
+      font-size: px2rem(20);
+      @include center
+    }
+
+    .input-wrapper {
+      .form {
+        @include left;
+        box-sizing: border-box;
+        padding: px2rem(5) px2rem(15);
+        margin: px2rem(10) px2rem(5);
+        width: 95%;
+        height: px2rem(35);
+        background: white;
+        border: px2rem(1) solid #eee;
+
+        .input {
+          height: px2rem(16);
+          width: 100%;
+          background: transparent;
+          border: none;
+          margin-left: px2rem(10);
+          font-size: px2rem(12);
+
+          &:focus {
+            outline: none;
+          }
+
+          &::-webkit-input-placeholder {
+            color: #ccc;
+          }
+        }
+      }
+
+      .error-input {
+        font-size: px2rem(10);
+        padding-left: px2rem(5);
+        color: red;
+      }
+    }
+
+    .forget-wrapper {
+      position: relative;
+      text-align: center;
+      font-size: px2rem(10);
+      color: burlywood;
+    }
+
+    .btn-wrapper {
+      position: relative;
+      padding: px2rem(5) px2rem(10);
+      display: flex;
+
+      .btn {
+        width: 50%;
+        box-sizing: border-box;
+        margin: px2rem(10) px2rem(20);
+        height: px2rem(30);
+        border: none;
+        color: white;
+        box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0, 0, 0, .1);
+        &:focus {
+          outline: none;
+        }
+      }
+      .login {
+        background: deepskyblue;
+      }
+      .register {
+        color: black;
+        background: beige;
+      }
+    }
+  }
+}

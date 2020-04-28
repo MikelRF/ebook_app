@@ -86,7 +86,7 @@
         width: 100%;
         height: px2rem(60);
         border-bottom: px2rem(1) solid #eee;
-        font-size: px2rem(16);
+        font-size: px2rem(14);
         color: #666;
         font-weight: bold;
         @include center;

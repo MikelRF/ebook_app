@@ -6,8 +6,11 @@ import './assets/styles/icomoon/icon.css'
 import './assets/styles/global.scss'
 import './utils/boost'
 import './utils/create-api'
-// import './mock'
+import VueLazyLoad from 'vue-lazyload'
 
+Vue.use(VueLazyLoad, {
+  loading: require('./assets/timg.jpg')
+})
 Vue.config.productionTip = false
 
 new Vue({

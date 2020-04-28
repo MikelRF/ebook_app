@@ -22,11 +22,11 @@
 
 <script type="text/ecmascript-6">
   import scroll from '../common/scroll'
-  import { getBookmark } from '../../utils/localStorage'
-  import { ebookMixin } from '../../utils/mixin'
+  import { getBookmark } from '../../utils/LocalStorage'
+  import { ebookMixin, userMixin } from '../../utils/mixin'
 
   export default {
-    mixins: [ebookMixin],
+    mixins: [ebookMixin, userMixin],
     components: {
       scroll
     },
@@ -44,7 +44,7 @@
       }
     },
     mounted() {
-      this.bookmark = getBookmark(this.fileName)
+      this.bookmark = getBookmark(this.userStorage)
     }
   }
 </script>
