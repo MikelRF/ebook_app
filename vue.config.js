@@ -9,8 +9,8 @@ module.exports = {
   configureWebpack: {
     performance: {
       hints: 'warning',
-      maxAssetSize: 512 * 1024,
-      maxEntrypointSize: 512 * 1024
+      maxAssetSize: 512 * 1024 * 10,
+      maxEntrypointSize: 512 * 1024 * 10
     }
   }
 }
