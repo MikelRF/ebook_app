@@ -280,8 +280,10 @@
       this.setFileName(fileName)
       // const fileName = books[1]
       // this.setUserName(sessionStorage.getItem('userName'))
-      this.setUserStorage(sessionStorage.getItem('userName') + '/' + fileName)
+      const book = this.$route.params.fileName.split('|')[1]
+      this.setUserStorage(sessionStorage.getItem('userName') + '/' + book)
       // 先从本地数据库中找是否有缓存数据
+      // console.log(this.userStorage)
       getLocalForage(this.userStorage, (err, blob) => {
         if (!err && blob) {
           // 找到离线缓存电子书
@@ -289,7 +291,7 @@
             this.jumpToNav()
         } else {
           // 通过网络访问
-            const url = process.env.VUE_APP_RES_EPUB_URL + '/' + this.fileName + '.epub'
+          const url = process.env.VUE_APP_RES_EPUB_URL + '/' + this.fileName + '.epub'
             this.initEpub(url)
             this.jumpToNav()
         }

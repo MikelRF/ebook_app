@@ -96,7 +96,8 @@
   const API_KEY = '40b4a718897e0bfe6923712a68508481'
   const isChrome = navigator.userAgent.toLowerCase().match(/chrome/)
   const notSupportTip = isChrome ? '您的浏览器暂时不支持体验功能，请升级您的浏览器' : '您现在使用的浏览器暂时不支持体验功能，<br />推荐使用谷歌浏览器Chrome'
-  function getWebsocketUrl() {
+
+  function getWebsocketUrl () {
     return new Promise((resolve, reject) => {
       const apiKey = API_KEY
       const apiSecret = API_SECRET
@@ -128,7 +129,7 @@
   // }
 
   class Experience {
-    constructor({
+    constructor ({
       speed = 50,
       voice = 50,
       pitch = 50,
@@ -154,7 +155,7 @@
       }
     }
 
-    setConfig({
+    setConfig ({
       speed,
       voice,
       pitch,
@@ -173,7 +174,7 @@
       this.resetAudio()
     }
 
-    onmessageWork(e) {
+    onmessageWork (e) {
       switch (e.data.command) {
         case 'newAudioData': {
           this.audioDatas.push(e.data.data)
@@ -187,19 +188,19 @@
       }
     }
 
-    setBtnState(state) {
+    setBtnState (state) {
       // const oldState = this.playState
       this.playState = state
     }
 
-    getAudio() {
+    getAudio () {
       this.setBtnState('ttsing')
       getWebsocketUrl().then((url) => {
         this.connectWebsocket(url)
       })
     }
 
-    connectWebsocket(url) {
+    connectWebsocket (url) {
       console.log('url', url)
       if ('WebSocket' in window) {
         this.websocket = new WebSocket(url)
@@ -262,7 +263,7 @@
       }
     }
 
-    resetAudio() {
+    resetAudio () {
       this.audioPause()
       this.setBtnState('unTTS')
       this.audioDatasIndex = 0
@@ -271,7 +272,7 @@
       clearTimeout(this.playTimeout)
     }
 
-    audioPlay() {
+    audioPlay () {
       try {
         if (!audioCtx) {
           console.log('1  audioCtx')
@@ -298,7 +299,7 @@
       }
     }
 
-    audioPause(state) {
+    audioPause (state) {
       if (this.playState === 'play') {
         this.setBtnState(state || 'endPlay')
       }
@@ -310,7 +311,7 @@
       }
     }
 
-    playSource() {
+    playSource () {
       let bufferLength = 0
       const dataLength = this.audioDatas.length
       for (let i = this.audioDatasIndex; i < dataLength; i++) {
@@ -348,6 +349,7 @@
       }
     }
   }
+
   const experience = new Experience({
     speed: 50,
     voice: 50,
@@ -365,37 +367,37 @@
     },
     computed: {
       // 音频当前播放的分钟数
-      currentMinute() {
+      currentMinute () {
         const m = Math.floor(this.currentPlayingTime / 60)
         return m < 10 ? '0' + m : m
       },
       // 音频当前播放的秒数
-      currentSecond() {
+      currentSecond () {
         const s = Math.floor(this.currentPlayingTime - parseInt(this.currentMinute) * 60)
         return s < 10 ? '0' + s : s
       },
       // 音频的总时长
-      totalMinute() {
+      totalMinute () {
         const m = Math.floor(this.totalPlayingTime / 60)
         return m < 10 ? '0' + m : m
       },
       // 音频的总秒数
-      totalSecond() {
+      totalSecond () {
         const s = Math.floor(this.totalPlayingTime - parseInt(this.totalMinute) * 60)
         return s < 10 ? '0' + s : s
       },
       // 音频的剩余分钟数
-      leftMinute() {
+      leftMinute () {
         const m = Math.floor((this.totalPlayingTime - this.currentPlayingTime) / 60)
         return m < 10 ? '0' + m : m
       },
       // 音频的剩余秒数
-      leftSecond() {
+      leftSecond () {
         const s = Math.floor((this.totalPlayingTime - this.currentPlayingTime) - parseInt(this.leftMinute) * 60)
         return s < 10 ? '0' + s : s
       },
       // 播放信息对象
-      playInfo() {
+      playInfo () {
         if (this.audioCanPlay) {
           return {
             currentMinute: this.currentMinute,
@@ -410,11 +412,11 @@
         }
       },
       // 电子书的语种
-      lang() {
+      lang () {
         return this.metadata ? this.metadata.language : ''
       },
       // 当播放面板显示时，禁用滚动条（解决事件穿透问题）
-      disableScroll() {
+      disableScroll () {
         if (this.$refs.speakWindow) {
           return this.$refs.speakWindow.visible
         } else {
@@ -422,19 +424,19 @@
         }
       },
       // 是否底部的播放面板
-      showPlay() {
+      showPlay () {
         return this.playingIndex >= 0
       },
       // 滚动条距底部距离，当显示播放面板时为116像素，不显示时为52像素
-      scrollBottom() {
+      scrollBottom () {
         return this.showPlay ? 52 : 0
       },
       // 当前章节信息
-      chapter() {
+      chapter () {
         return this.flatNavigation[this.playingIndex]
       },
       // 电子书摘要信息
-      desc() {
+      desc () {
         if (this.description) {
           return this.description.substring(0, 100)
         } else {
@@ -442,7 +444,7 @@
         }
       },
       // 一维数组的目录
-      flatNavigation() {
+      flatNavigation () {
         if (this.navigation) {
           return Array.prototype.concat.apply([], Array.prototype.concat.apply([], this.doFlatNavigation(this.navigation.toc)))
         } else {
@@ -450,19 +452,19 @@
         }
       },
       // 电子书分类
-      category() {
+      category () {
         return this.bookItem ? getCategoryName(this.bookItem.category) : ''
       },
       // 电子书书名
-      title() {
+      title () {
         return this.metadata ? this.metadata.title : ''
       },
       // 电子书作者
-      author() {
+      author () {
         return this.metadata ? this.metadata.creator : ''
       }
     },
-    data() {
+    data () {
       return {
         bookItem: null,
         book: null,
@@ -653,19 +655,20 @@
           this.bookItem = findBook(fileName)
         }
         if (this.bookItem) {
-          getLocalForage(fileName, (err, blob) => {
-            if (err || !blob) {
-              // this.downloadBook(fileName)
-              this.isOnline = true
-              const opf = this.$route.query.opf
-              if (opf) {
-                this.parseBook(opf)
+          getLocalForage(`${sessionStorage.getItem('userName')} / ${fileName}}`
+            , (err, blob) => {
+              if (err || !blob) {
+                // this.downloadBook(fileName)
+                this.isOnline = true
+                const opf = this.$route.query.opf
+                if (opf) {
+                  this.parseBook(opf)
+                }
+              } else {
+                this.isOnline = false
+                this.parseBook(blob)
               }
-            } else {
-              this.isOnline = false
-              this.parseBook(blob)
-            }
-          })
+            })
         } else {
           this.findBookFromList(fileName)
         }
@@ -674,12 +677,13 @@
         download(
           this.bookItem,
           () => {
-            getLocalForage(fileName, (err, blob) => {
-              if (err) {
-                return
-              }
-              this.parseBook(blob)
-            })
+            getLocalForage(`${sessionStorage.getItem('userName')} / ${fileName}}`
+              , (err, blob) => {
+                if (err) {
+                  return
+                }
+                this.parseBook(blob)
+              })
           })
       },
       parseBook (blob) {

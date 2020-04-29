@@ -211,26 +211,27 @@
         })
       },
       trialListening () {
-        getLocalForage(this.bookItem.fileName, (err, value) => {
-          // 离线
-          if (!err && value && value instanceof Blob) {
-            this.$router.push({
-              path: '/store/speaking',
-              query: {
-                fileName: this.bookItem.fileName
-              }
-            })
-            // 在线
-          } else {
-            this.$router.push({
-              path: '/store/speaking',
-              query: {
-                fileName: this.bookItem.fileName,
-                opf: this.opf
-              }
-            })
-          }
-        })
+        getLocalForage(`${sessionStorage.getItem('userName')} / ${this.bookItem.fileName}}`
+          , (err, value) => {
+            // 离线
+            if (!err && value && value instanceof Blob) {
+              this.$router.push({
+                path: '/store/speaking',
+                query: {
+                  fileName: this.bookItem.fileName
+                }
+              })
+              // 在线
+            } else {
+              this.$router.push({
+                path: '/store/speaking',
+                query: {
+                  fileName: this.bookItem.fileName,
+                  opf: this.opf
+                }
+              })
+            }
+          })
       },
       read (item) {
         this.$router.push({

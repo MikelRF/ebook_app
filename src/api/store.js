@@ -153,7 +153,8 @@ export function download (book, onSuccess, onError, onProgress) {
     .then(res => {
       const blob = new Blob([res.data])
       // 缓存
-      setLocalForage(book.fileName, blob,
+      const userName = sessionStorage.getItem('userName')
+      setLocalForage(`${userName}/${book.fileName}`, blob,
         () => { // 成功回调
           if (onSuccess) onSuccess(res)
         },
