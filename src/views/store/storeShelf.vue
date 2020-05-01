@@ -2,7 +2,6 @@
   <div class="store-shelf">
     <shelf-title :title="'书架'" :parentName="'storeShelf'"></shelf-title>
     <scroll class="store-shelf-scroll-wrapper"
-            :top="0"
             :bottom="scrollBottom"
             @onScroll="onScroll"
             ref="scroll">
@@ -36,8 +35,8 @@
     watch: {
       // 监听编辑模式，编辑模式下滚动条距底部需要产生48像素的距离
       isEditMode (isEditMode) {
-        this.scrollBottom = isEditMode ? 48 : 0
         // $nextTick 等待界面变化完成后刷新滚动条
+        this.scrollBottom = isEditMode ? 50 : 40
         this.$nextTick(() => {
           this.$refs.scroll.refresh()
         })
@@ -45,7 +44,7 @@
     },
     data () {
       return {
-        scrollBottom: 0
+        scrollBottom: 40
       }
     },
     methods: {

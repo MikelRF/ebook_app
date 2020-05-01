@@ -2,7 +2,8 @@
   <div class="store-home">
     <search-bar></search-bar>
     <random-book></random-book>
-    <scroll :top="scrollTop" @onScroll="onscroll" ref="scroll">
+    <scroll :top="scrollTop"
+            @onScroll="onscroll" ref="scroll">
       <div class="banner-wrapper">
 <!--        <div class="banner-img" :style="{backgroundImage:`url('${banner}')`}"></div>-->
         <banner class="banner-img" :bannerList="banner"></banner>

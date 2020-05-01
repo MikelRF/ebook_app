@@ -7,7 +7,6 @@ import './assets/styles/global.scss'
 import './utils/boost'
 import './utils/create-api'
 import VueLazyLoad from 'vue-lazyload'
-
 Vue.use(VueLazyLoad, {
   loading: require('./assets/timg.jpg')
 })

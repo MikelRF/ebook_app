@@ -5,8 +5,8 @@
         <span class="shelf-title-text">{{title}}</span>
       </div>
 <!--      <div class="shelf-title-btn-wrapper shelf-title-left">-->
-<!--        <span class="shelf-title-btn-text" @click="clearCache" v-if="showClear">清空缓存</span>-->
-<!--      </div>-->
+      <!--        <span class="shelf-title-btn-text" @click="clearCache" v-if="showClear">清空缓存</span>-->
+      <!--      </div>-->
       <div class="shelf-title-btn-wrapper shelf-title-left" v-if="showBack">
         <span class="icon-back" @click="back"></span>
       </div>
