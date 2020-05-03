@@ -68,8 +68,8 @@
     <div class="bottom-wrapper">
       <div class="bottom-btn" @click.stop.prevent="readBook()">阅读</div>
       <div class="bottom-btn" @click.stop.prevent="commentWrite()">写评论</div>
-      <div class="bottom-btn" @click.stop.prevent="addOrRemoveShelf()">
-        <!--        <span class="icon-check" v-if="inBookShelf"></span>-->
+      <div class="bottom-btn" @click="addOrRemoveShelf()">
+        <span class="icon-check" v-if="inBookShelf"></span>
         {{inBookShelf ? '移出书架' : '加入书架'}}
       </div>
     </div>
@@ -135,7 +135,6 @@
         return this.metadata ? this.metadata.creator : ''
       },
       inBookShelf () {
-        this.getShelfList()
         if (this.bookItem && this.shelfList) {
           // 定义一个自执行函数，将书架转为一维数组结构，并且只保留type为1的数据（type=1的为电子书）
           const flatShelf = (function flatten (arr) {
@@ -177,23 +176,17 @@
             removeBookFromShelf(this.bookItem, sessionStorage.getItem('userName')).then(response => {
               // console.log('addOrRemoveShelf', response)
               if (response.data.error_code === 0) {
+                // getBookShelf(sessionStorage.getItem('userName')).then(response => {
+                //   if (response.data.error_code === 0) {
+                //     this.setShelfList(appendAddToShelf(response.data.data))
+                //   }
+                // })
                 this.removeSelectedBook(this.bookItem)
-                getBookShelf(sessionStorage.getItem('userName')).then(response => {
-                  if (response.data.error_code === 0) {
-                    this.setShelfList(appendAddToShelf(response.data.data))
-                  }
-                })
                 this.simpleToast('移出成功')
               } else {
                 this.simpleToast('移出失败')
               }
             })
-            // this.setShelfList(list)
-            //   .then(() => {
-            //     // 将书架数据保存到LocalStorage
-            //     saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
-            //     this.simpleToast('移出书架成功')
-            //   })
           } else {
             // 如果电子书不存在于书架，则添加电子书到书架
             addBookToShelf(this.bookItem, sessionStorage.getItem('userName')).then(response => {
@@ -364,6 +357,7 @@
     },
     mounted () {
       this.init()
+      this.getShelfList()
     }
   }
 </script>

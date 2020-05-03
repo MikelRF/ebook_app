@@ -125,7 +125,6 @@ export const shelfMixin = {
     removeSelectedBook (bookItem) {
       console.log(bookItem)
       if (bookItem) {
-        console.log('123')
         this.removeBook(bookItem)
       } else {
         Promise.all(this.shelfSelected.map(book => this.removeBook(book)))
@@ -134,8 +133,8 @@ export const shelfMixin = {
               book.cache = false
             })
           })
-        this.getShelfList()
       }
+      this.getShelfList()
     },
     removeBook (book) {
       return new Promise((resolve, reject) => {
