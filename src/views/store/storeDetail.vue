@@ -82,10 +82,9 @@
   import bookInfo from '../../components/detail/bookInfo'
   import scroll from '../../components/common/scroll'
   import toast from '../../components/common/toast'
-  import { commentText, detail, getScore } from '../../api/store'
+  import { addBookToShelf, removeBookFromShelf, getBookShelf, commentText, detail, getScore } from '../../api/store'
   import { px2rem, realpx } from '../../utils/book'
-  import { saveBookShelf, getBookShelf } from '../../utils/LocalStorage'
-  import { backToUpLevel, removeFromBookShelf, addToShelf } from '../../utils/store'
+  import { backToUpLevel, appendAddToShelf } from '../../utils/store'
   import Epub from 'epubjs'
   import { shelfMixin } from '../../utils/mixin'
   import { getLocalForage } from '../../utils/localForage'
@@ -136,6 +135,7 @@
         return this.metadata ? this.metadata.creator : ''
       },
       inBookShelf () {
+        this.getShelfList()
         if (this.bookItem && this.shelfList) {
           // 定义一个自执行函数，将书架转为一维数组结构，并且只保留type为1的数据（type=1的为电子书）
           const flatShelf = (function flatten (arr) {
@@ -174,18 +174,40 @@
         if (sessionStorage.getItem('isLogin')) {
           // 如果电子书存在于书架，则从书架中移除电子书
           if (this.inBookShelf) {
-            const list = removeFromBookShelf(this.bookItem)
-            this.setShelfList(list)
-              .then(() => {
-                // 将书架数据保存到LocalStorage
-                saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
-                this.simpleToast('移出书架成功')
-              })
+            removeBookFromShelf(this.bookItem, sessionStorage.getItem('userName')).then(response => {
+              // console.log('addOrRemoveShelf', response)
+              if (response.data.error_code === 0) {
+                getBookShelf(sessionStorage.getItem('userName')).then(response => {
+                  if (response.data.error_code === 0) {
+                    this.setShelfList(appendAddToShelf(response.data.data))
+                  }
+                })
+                this.simpleToast('移出成功')
+              } else {
+                this.simpleToast('移出失败')
+              }
+            })
+            // this.setShelfList(list)
+            //   .then(() => {
+            //     // 将书架数据保存到LocalStorage
+            //     saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
+            //     this.simpleToast('移出书架成功')
+            //   })
           } else {
             // 如果电子书不存在于书架，则添加电子书到书架
-            addToShelf(this.bookItem)
-            this.setShelfList(getBookShelf(sessionStorage.getItem('userName')))
-            this.simpleToast('加入书架成功')
+            addBookToShelf(this.bookItem, sessionStorage.getItem('userName')).then(response => {
+              const result = response.data
+              if (result.error_code === 0) {
+                getBookShelf(sessionStorage.getItem('userName')).then(response => {
+                  if (response.data.error_code === 0) {
+                    this.setShelfList(appendAddToShelf(response.data.data))
+                  }
+                })
+                this.simpleToast('加入书架成功')
+              } else {
+                this.simpleToast('加入书架失败')
+              }
+            })
           }
         } else {
           this.$router.push('/login')

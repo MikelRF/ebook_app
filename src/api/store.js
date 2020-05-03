@@ -37,7 +37,7 @@ export function register (userName, passWord) {
 export function getCommentList (title) {
   return axios({
     method: 'get',
-    url: `${process.env.VUE_APP_BASE_URL}/detail/comment-list`,
+    url: `${process.env.VUE_APP_BASE_URL}/detail/commentList`,
     params: {
       title
     }
@@ -63,17 +63,6 @@ export function getScore (fileName) {
     url: `${process.env.VUE_APP_BASE_URL}/book/getScore`,
     params: {
       fileName
-    }
-  })
-}
-
-export function updateCommentScore (id, score) {
-  return axios({
-    method: 'get',
-    url: `${process.env.VUE_APP_BASE_URL}/book/updateCommentScore`,
-    params: {
-      id,
-      score
     }
   })
 }
@@ -130,10 +119,110 @@ export function detail (book) {
 export function flatList () {
   return axios({
     method: 'get',
-    url: `${process.env.VUE_APP_BOOK_URL}/book/flat-list`
+    url: `${process.env.VUE_APP_BOOK_URL}/book/flatList`
   })
 }
 
+export function getBookShelf (userName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/getBookShelf`,
+    params: {
+      userName
+    }
+  })
+}
+
+export function addBookToShelf (book, userName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/addToShelf`,
+    params: {
+      book,
+      userName
+    }
+  })
+}
+
+export function getIdList (list) {
+  const res = []
+  if (list.length && list.length > 0) {
+    list.forEach(item => {
+      res.push(item.bookId)
+    })
+  } else {
+    res.push(list.id)
+  }
+  return res
+}
+
+export function removeBookFromShelf (book, userName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/removeBookFromShelf`,
+    params: {
+      userName,
+      list: getIdList(book)
+    }
+  })
+}
+
+export function getCategoryList (shelfCategoryName, userName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/getCategoryList`,
+    params: {
+      shelfCategoryName,
+      userName
+    }
+  })
+}
+
+export function moveToGroup (selected, userName, groupName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/moveToGroup`,
+    params: {
+      list: getIdList(selected),
+      userName,
+      groupName
+    }
+  })
+}
+
+export function moveOutOfGroup (selected, userName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/moveOutOfGroup`,
+    params: {
+      list: getIdList(selected),
+      userName
+    }
+  })
+}
+
+export function changeGroupName (newName, userName, oldName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/changeGroupName`,
+    params: {
+      newName,
+      oldName,
+      userName
+    }
+  })
+}
+
+export function duplicateGroupName (newName, userName) {
+  return axios({
+    method: 'get',
+    url: `${process.env.VUE_APP_BOOK_URL}/shelf/duplicateGroupName`,
+    params: {
+      newName,
+      userName
+    }
+  })
+}
 // 电子书下载
 // onSuccess， onError， onProgress 为回调函数
 export function download (book, onSuccess, onError, onProgress) {

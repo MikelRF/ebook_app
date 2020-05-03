@@ -1,5 +1,6 @@
 <template>
   <div class="store-shelf">
+    <router-view></router-view>
     <shelf-title :title="'书架'" :parentName="'storeShelf'"></shelf-title>
     <scroll class="store-shelf-scroll-wrapper"
             :bottom="scrollBottom"

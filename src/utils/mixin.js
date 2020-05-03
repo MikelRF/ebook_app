@@ -1,7 +1,9 @@
 import { mapActions, mapGetters } from 'vuex'
 import { addCss, removeAllCss, ThemeList } from './book'
-import { saveLocation, getBookmark, getBookShelf, saveBookShelf } from './LocalStorage'
+import { saveLocation, getBookmark } from './LocalStorage'
 import { appendAddToShelf, computedId, gotoBookDetail, removeAddFromShelf } from './store'
+import { getBookShelf, moveOutOfGroup } from '../api/store'
+import { getLocalForage } from './localForage'
 
 export const userMixin = {
   computed: {
@@ -43,22 +45,40 @@ export const shelfMixin = {
     showBookDetail (book) {
       gotoBookDetail(this, book)
     },
+    updateCache(list, userName) {
+      list.map(book => {
+        if (book.itemList) {
+          book.itemList = this.updateCache(book.itemList, userName)
+        }
+        getLocalForage(userName + '/' + book.fileName, (err, res) => {
+          if (!err && res) {
+            book.cache = true
+          }
+        })
+      })
+      return list
+    },
     getShelfList () {
-      let shelfList = getBookShelf(sessionStorage.getItem('userName'))
-      // 无缓存
-      if (!shelfList) {
-        shelfList = appendAddToShelf([])
-        saveBookShelf(sessionStorage.getItem('userName'), shelfList)
-        return this.setShelfList(shelfList)
-      } else {
-        return this.setShelfList(shelfList)
-      }
+      getBookShelf(sessionStorage.getItem('userName')).then(response => {
+        const result = response.data
+        let shelfList
+        if (result.error_code === 0) { // 有收藏
+          // shelfList = result.data
+          // this.setShelfList(appendAddToShelf(computedId(shelfList)))
+          shelfList = this.updateCache(result.data, sessionStorage.getItem('userName'))
+          this.setShelfList(appendAddToShelf(computedId(shelfList)))
+        } else if (result.error_code === 2) { // 无收藏
+          shelfList = appendAddToShelf([])
+          this.setShelfList(shelfList)
+        } else {
+          this.simpleToast('获取书架失败...')
+          this.setShelfList(appendAddToShelf([]))
+        }
+      })
     },
     getCategoryList (title) {
-      this.getShelfList().then(() => {
-        const categoryList = this.shelfList.filter(book => book.type === 2 && book.title === title)[0]
-        this.setShelfCategory(categoryList)
-      })
+      const categoryList = this.shelfList.filter(book => book.type === 2 && book.shelfCategoryName === title)[0]
+      this.setShelfCategory(categoryList)
     },
     // 隐藏弹窗
     hidePopup () {
@@ -78,20 +98,26 @@ export const shelfMixin = {
       })
     },
     moveOutOfGroup (cb) {
-      // 过滤
-      this.setShelfList(this.shelfList.map(book => {
-        if (book.type === 2 && book.itemList) {
-          // 保留未被选中的图书
-          book.itemList = book.itemList.filter(subBook => !subBook.selected)
+      moveOutOfGroup(this.shelfSelected, sessionStorage.getItem('userName')).then(response => {
+        console.log(response)
+        if (response.data.error_code === 0) {
+          // 过滤
+          this.setShelfList(this.shelfList.map(book => {
+            if (book.type === 2 && book.itemList) {
+              book.itemList = book.itemList.filter(subBook => !subBook.selected)
+            }
+            return book
+          })).then(() => { // 放回书架页
+            let list = removeAddFromShelf(this.shelfList) // 移出 +
+            list = [].concat(list, ...this.shelfSelected)
+            list = appendAddToShelf(list) // 加上 +
+            list = computedId(list) // 重新计算id
+            this.setShelfList(list)
+            this.simpleToast('成功移出分组')
+          })
+        } else {
+          this.simpleToast('移出分组失败...')
         }
-        return book
-      })).then(() => { // 放回书架页
-        let list = removeAddFromShelf(this.shelfList) // 移出 +
-        list = [].concat(list, ...this.shelfSelected)
-        list = appendAddToShelf(list) // 加上 +
-        list = computedId(list) // 重新计算id
-        this.setShelfList(list)
-        this.simpleToast('成功移出分组')
         if (cb) cb()
       })
     }

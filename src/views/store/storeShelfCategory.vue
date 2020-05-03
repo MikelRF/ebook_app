@@ -1,6 +1,6 @@
 <template>
   <div class="store-shelf">
-    <shelf-title :title="shelfCategory.title" :parentName="'storeShelfCategory'"></shelf-title>
+    <shelf-title :title="shelfCategory.shelfCategoryName ? shelfCategory.shelfCategoryName : ''" :parentName="'storeShelfCategory'"></shelf-title>
     <scroll class="store-shelf-scroll-wrapper"
             :top="0"
             :bottom="scrollBottom"
@@ -34,8 +34,11 @@
     },
     computed: {
       ifShowList () {
-        return this.shelfCategory.itemList &&
-          this.shelfCategory.itemList.length > 0
+        if (this.shelfCategory.itemList && this.shelfCategory.itemList.length > 0) {
+          return true
+        } else {
+          return false
+        }
       }
     },
     watch: {
@@ -62,7 +65,6 @@
       }
     },
     mounted () {
-      // 获取分类列表数据
       this.getCategoryList(this.$route.query.title)
       // 标记currentType为2，对于不同的currentType，ShelfTitle将呈现不同状态
       this.setCurrentType(2)

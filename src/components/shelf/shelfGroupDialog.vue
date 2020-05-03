@@ -10,7 +10,8 @@
            v-show="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
         <!--        ⬆移出组内只能在组内显示，新建组、自定义组都可显示-->
         <div class="dialog-list-item-text"
-             :class="{'currentCategory': isInGroup && shelfCategory.id === item.id}">{{item.title}}
+             :class="{'currentCategory': isInGroup && shelfCategory.id === item.id}">{{item.title ? item.title :
+          item.shelfCategoryName}}
         </div>
       </div>
     </div>
@@ -44,6 +45,7 @@
   import { shelfMixin } from '../../utils/mixin'
   import { removeAddFromShelf, appendAddToShelf } from '../../utils/store'
   import { saveBookShelf } from '../../utils/LocalStorage'
+  import { changeGroupName, moveToGroup, duplicateGroupName } from '../../api/store'
 
   export default {
     name: 'group-dialog',
@@ -118,32 +120,47 @@
       },
       // 图书移到小组中
       moveToGroup (group) {
-        this.setShelfList(this.shelfList
-          .filter(book => {
-            // 当前目标是一个分组移到另一个分组
-            if (book.itemList) {
-              // <0 表示未变选中
-              book.itemList = book.itemList.filter(subBook => this
-                .shelfSelected.indexOf(subBook) < 0)
-            }
-            // 从书架中移出
-            return this.shelfSelected.indexOf(book) < 0
-          })) // 书架图书更新完毕
-          .then(() => { // 移动图书到指定分组
-            if (group) {
-              // 分组中原来存在的图书与选中图书合并成新数组
-              group.itemList = [...group.itemList, ...this.shelfSelected]
-            }
-            group.itemList.forEach((item, index) => {
-              item.id = index + 1 // 重置id
-            })
-            this.simpleToast('成功移入$1'.replace('$1', group.title))
+        moveToGroup(this.shelfSelected, sessionStorage.getItem('userName'), group.shelfCategoryName).then(response => {
+          if (response.data.error_code === 0) {
+            this.setShelfList(this.shelfList.filter(book => {
+              // 当前目标是一个分组移到另一个分组
+              if (book.itemList) {
+                // <0 表示未变选中
+                book.itemList = book.itemList.filter(subBook => this
+                  .shelfSelected.indexOf(subBook) < 0)
+              }
+              // 从书架中移出
+              return this.shelfSelected.indexOf(book) < 0
+            })) // 书架图书更新完毕
+              .then(() => { // 移动图书到指定分组
+                if (group) {
+                  // 分组中原来存在的图书与选中图书合并成新数组
+                  group.itemList = [...group.itemList, ...this.shelfSelected]
+                }
+                group.itemList.forEach((item, index) => {
+                  item.id = index + 1 // 重置id
+                })
+              })
+            this.simpleToast('成功移入$1'.replace('$1', group.shelfCategoryName))
             this.onComplete()
-          })
+          } else {
+           this.simpleToast('分组失败...')
+          }
+        })
       },
       // 移出分组
       moveOutFromGroup () {
         this.moveOutOfGroup(this.onComplete)
+      },
+      // 新分组是否重名
+      DuplicateGroupName(category, newGroupName) {
+        let success = true
+        category.forEach(item => {
+          if (item.shelfCategoryName === newGroupName) {
+            success = false
+          }
+        })
+        return success
       },
       // 创建新的分组
       createNewGroup () {
@@ -151,26 +168,47 @@
         if (!this.newGroupName || this.newGroupName.length === 0) {
           return
         }
-        if (this.showNewGroup) { // 空组中的修改分组
-          this.shelfCategory.title = this.newGroupName
-          this.onComplete()
-        } else {
-          const group = {
-            id: this.shelfList[this.shelfList.length - 2].id + 1,
-            itemList: [],
-            selected: false,
-            title: this.newGroupName,
-            type: 2
+        if (this.showNewGroup) { // 修改分组名
+          if (this.newGroupName === this.shelfCategory.shelfCategoryName) {
+            this.simpleToast('与原组名重复...')
+          } else {
+            duplicateGroupName(this.newGroupName, sessionStorage.getItem('userName')).then(response => {
+              if (response.data.error_code === 0) {
+                changeGroupName(this.newGroupName, sessionStorage.getItem('userName'), this.shelfCategory.shelfCategoryName).then(response => {
+                  if (response.data.error_code === 0) {
+                    this.shelfCategory.shelfCategoryName = this.newGroupName
+                    this.onComplete()
+                    this.simpleToast('修改成功')
+                  } else {
+                    this.simpleToast('修改失败')
+                  }
+                })
+              } else if (response.data.error_code === 2) {
+                this.simpleToast('当前已存在该组名...')
+              }
+            })
           }
-          // 移出“添加”图书
-          const list = removeAddFromShelf(this.shelfList)
-          // 加入新的分组
-          list.push(group)
-          // 添加“添加”图书
-          this.setShelfList(appendAddToShelf(list)).then(() => {
-            this.moveToGroup(group)
-            this.onComplete()
-          })
+        } else {
+          if (this.DuplicateGroupName(this.category, this.newGroupName)) {
+            const group = {
+              id: this.shelfList[this.shelfList.length - 2].id + 1,
+              itemList: [],
+              selected: false,
+              shelfCategoryName: this.newGroupName,
+              type: 2
+            }
+            // 移出“添加”图书
+            const list = removeAddFromShelf(this.shelfList)
+            // 加入新的分组
+            list.push(group)
+            // 添加“添加”图书
+            this.setShelfList(appendAddToShelf(list)).then(() => {
+              this.moveToGroup(group)
+              this.onComplete()
+            })
+          } else {
+            this.simpleToast('该组名已存在...')
+          }
         }
       },
       onComplete () {

@@ -30,7 +30,14 @@
     mixins: [shelfMixin],
     computed: {
       item () {
-        return this.data.type === 1 ? this.book : (this.data.type === 2 ? this.category : this.add)
+        if (this.data.type === 1 || (!this.data.itemList && this.data.type === 2)) {
+          return this.book
+        } else if (this.data.itemList && this.data.itemList.length > 0) {
+          return this.category
+        } else {
+          return this.add
+        }
+        // return this.data.type === 1 ? this.book : (this.data.shelfCategoryName === '' ? this.category : this.add)
       }
     },
     data () {
@@ -50,7 +57,7 @@
             // 避免重复填入数组
             this.shelfSelected.pushWithoutDuplicate(this.data)
           } else {
-            this.setShelfSelected(this.shelfSelected.filter(item => item.id !== this.data.id))
+            this.setShelfSelected(this.shelfSelected.filter(item => item.bookId !== this.data.bookId))
           }
         } else {
           // 非编辑模式，1 跳转详情 2 跳转分组 3跳转首页
@@ -60,7 +67,7 @@
             this.$router.push({
               path: '/store/category',
               query: {
-                title: this.data.title
+                title: this.data.shelfCategoryName
               }
             })
           } else {
@@ -79,9 +86,11 @@
     position: relative;
     width: 100%;
     height: 100%;
+
     .shelf-item {
       width: 100%;
       height: 100%;
+
       &.shelf-item-shadow {
         box-shadow: px2rem(3) px2rem(3) px2rem(6) px2rem(4) rgba(200, 200, 200, .5);
       }
@@ -106,6 +115,7 @@
         }
       }
     }
+
     .mask {
       position: absolute;
       top: 0;

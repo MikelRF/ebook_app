@@ -1,4 +1,4 @@
-import { saveBookShelf, getBookShelf, getLocalStorage } from './LocalStorage'
+import { getLocalStorage } from './LocalStorage'
 
 export function backToUpLevel (vue) {
   vue.$router.go(-1)
@@ -168,28 +168,28 @@ export function computedId (list) {
   })
 }
 
-export function addToShelf (book) {
-  let shelfList = getBookShelf(sessionStorage.getItem('userName'))
-  if (!shelfList) {
-    shelfList = []
-  } else {
-    shelfList = removeAddFromShelf(shelfList)
-  }
-  book.type = 1
-  shelfList.push(book)
-  shelfList = computedId(shelfList)
-  shelfList = appendAddToShelf(shelfList)
-  saveBookShelf(sessionStorage.getItem('userName'), shelfList)
-}
-
-export function removeFromBookShelf (book) {
-  return getBookShelf(sessionStorage.getItem('userName')).filter(item => {
-    if (item.itemList) {
-      item.itemList = item.itemList.filter(subBook => subBook.fileName !== book.fileName)
-    }
-    return book.fileName !== item.fileName
-  })
-}
+// export function addToShelf (book, username) {
+//   addBookToShelf(book, username).then(response => {
+//     const result = response.data
+//     if (result.error_code === 0) {
+//     } else {
+//     }
+//   })
+//   // let shelfList = getBookShelf(sessionStorage.getItem('userName'))
+//   // if (!shelfList) {
+//   //   shelfList = []
+//   // } else {
+//   //   shelfList = removeAddFromShelf(shelfList)
+//   // }
+//   // book.type = 1
+//   // shelfList.push(book)
+//   // shelfList = computedId(shelfList)
+//   // shelfList = appendAddToShelf(shelfList)
+//   // saveBookShelf(sessionStorage.getItem('userName'), shelfList)
+// }
+//
+// export function getBookShelfList (userName) {
+// }
 
 export function flatBookList (bookList) {
   if (bookList) {

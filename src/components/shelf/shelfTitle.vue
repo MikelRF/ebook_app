@@ -5,8 +5,8 @@
         <span class="shelf-title-text">{{title}}</span>
       </div>
 <!--      <div class="shelf-title-btn-wrapper shelf-title-left">-->
-      <!--        <span class="shelf-title-btn-text" @click="clearCache" v-if="showClear">清空缓存</span>-->
-      <!--      </div>-->
+<!--              <span class="shelf-title-btn-text" @click="clearCache" v-if="showClear">清空缓存</span>-->
+<!--            </div>-->
       <div class="shelf-title-btn-wrapper shelf-title-left" v-if="showBack">
         <span class="icon-back" @click="back"></span>
       </div>
@@ -86,9 +86,10 @@
           if (this.isChoseAll) { // 全选中时
             this.shelfList.forEach(book => {
               // 找到该组
-              if (book.type === 2 && book.title === this.title) {
+              if (book.type === 2 && book.shelfCategoryName === this.title) {
                 book.itemList.forEach(subBook => {
                   subBook.selected = true
+                  console.log('subBook', subBook, 'selected', subBook.selected)
                   this.shelfSelected.pushWithoutDuplicate(subBook)
                 })
               }
@@ -188,26 +189,11 @@
       },
       clearCache () {
         clearLocalForage()
-        // clearLocalStorage()
-        // this.setShelfList([])
         this.getShelfList()
-        this.setShelfList(this.shelfList.forEach(book => {
-          if (book.type === 1 || book.type === 2) {
-            if (book.itemList) {
-              book.itemList = book.itemList.forEach(subBook => {
-                subBook.cache = false
-                subBook.selected = false
-              })
-            } else {
-              book.selected = false
-              book.cache = false
-            }
-          }
-        }))
-        // this.setShelfSelected([])
-        // this.getShelfList()
         this.simpleToast('缓存已清空')
       }
+    },
+    mounted () {
     }
   }
 </script>

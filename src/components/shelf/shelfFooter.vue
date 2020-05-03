@@ -20,8 +20,8 @@
 
 <script>
   import { shelfMixin } from '../../utils/mixin'
-  import { saveBookShelf, removeLocalStorage } from '../../utils/LocalStorage'
-  import { download } from '../../api/store'
+  import { saveBookShelf } from '../../utils/LocalStorage'
+  import { download, removeBookFromShelf } from '../../api/store'
   import { removeLocalForage } from '../../utils/localForage'
 
   export default {
@@ -78,7 +78,7 @@
       async setDownload () {
         this.onComplete()
         if (this.isDownload) { // 选中目标为已下载
-          this.removeSelectedBook() // 删除缓存
+          this.removeSelectedBook(this.shelfList) // 删除缓存
         } else { // 未下载
           await this.downloadSelectedBook().then(res => {
             if (res) {
@@ -122,22 +122,18 @@
         })
       },
       // 删除离线
-      removeSelectedBook () {
+      removeSelectedBook (list) {
         Promise.all(this.shelfSelected.map(book => this.removeBook(book)))
           .then(books => {
             books.map(book => {
               book.cache = false
             })
-            saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
             this.simpleToast('删除缓存成功')
           })
       },
       removeBook (book) {
         return new Promise((resolve, reject) => {
-          // 清空电子书缓存
-          removeLocalStorage(`${book.categoryText}/${book.fileName}-info`)
-          // 清空电子书离线
-          removeLocalForage(`${book.fileName}`)
+          removeLocalForage(`${sessionStorage.getItem('userName')}/${book.fileName}`)
           resolve(book)
         })
       },
@@ -167,16 +163,24 @@
       },
       // 移出书架
       removeSelected () {
-        this.shelfSelected.forEach(selected => {
-          this.removeBook(selected)
-          this.setShelfList(this.shelfList.filter(book => {
-            if (book.itemList) {
-              book.itemList = book.itemList.filter(subBook => subBook !== selected)
-            }
-           return book !== selected
-          }))
+        removeBookFromShelf(this.shelfSelected, sessionStorage.getItem('userName')).then(response => {
+          const result = response.data
+          console.log(response)
+          if (result.error_code === 0) {
+            this.shelfSelected.forEach(selected => {
+              this.setShelfList(this.shelfList.filter(book => {
+                if (book.itemList) {
+                  book.itemList = book.itemList.filter(subBook => subBook !== selected)
+                }
+                return book !== selected
+              }))
+            })
+            this.setShelfSelected([])
+            this.simpleToast('移出成功')
+          } else {
+            this.simpleToast('移出失败')
+          }
         })
-        // this.setShelfSelected([])
         this.onComplete()
       },
       // 显示移出书架弹窗

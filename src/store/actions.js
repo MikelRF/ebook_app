@@ -69,29 +69,29 @@ const actions = {
     return commit('SET_RANDOM_BOOK', book)
   },
   // shelf
-  setIsEditMode({ commit }, isEditMode) {
+  setIsEditMode ({ commit }, isEditMode) {
     return commit('SET_IS_EDIT_MODE', isEditMode)
   },
-  setShelfList({ commit }, list) {
+  setShelfList ({ commit }, list) {
     return commit('SET_SHELF_LIST', list)
   },
-  setShelfSelected({ commit }, selected) {
+  setShelfSelected ({ commit }, selected) {
     return commit('SET_SHELF_SELECTED', selected)
   },
-  setShelfTitleVisible({ commit }, visible) {
+  setShelfTitleVisible ({ commit }, visible) {
     return commit('SET_SHELF_TITLE_VISIBLE', visible)
   },
-  setShelfCategory({ commit }, category) {
+  setShelfCategory ({ commit }, category) {
     return commit('SET_SHELF_CATEGORY', category)
   },
-  setCurrentType({ commit }, type) {
+  setCurrentType ({ commit }, type) {
     return commit('SET_CURRENT_TYPE', type)
   },
   // user
-  setUserName({ commit }, type) {
+  setUserName ({ commit }, type) {
     return commit('SET_USER_NAME', type)
   },
-  setUserStorage({ commit }, type) {
+  setUserStorage ({ commit }, type) {
     return commit('SET_USER_STORAGE', type)
   }
 }
