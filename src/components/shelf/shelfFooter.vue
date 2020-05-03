@@ -20,7 +20,6 @@
 
 <script>
   import { shelfMixin } from '../../utils/mixin'
-  import { saveBookShelf } from '../../utils/LocalStorage'
   import { download, removeBookFromShelf } from '../../api/store'
 
   export default {
@@ -71,7 +70,6 @@
       onComplete () {
         this.hidePopup()
         this.setIsEditMode(false)
-        saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
       },
       // 设置离线
       async setDownload () {
@@ -82,7 +80,6 @@
         } else { // 未下载
           await this.downloadSelectedBook().then(res => {
             if (res) {
-              saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
               this.simpleToast('缓存成功')
             } else {
               this.simpleToast('缓存失败')
@@ -149,7 +146,6 @@
       removeSelected () {
         removeBookFromShelf(this.shelfSelected, sessionStorage.getItem('userName')).then(response => {
           const result = response.data
-          console.log(response)
           if (result.error_code === 0) {
             this.removeSelectedBook()
             this.shelfSelected.forEach(selected => {

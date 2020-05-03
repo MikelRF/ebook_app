@@ -252,7 +252,6 @@
       // 初始化电子书
       initEpub (url) {
         this.book = new Epub(url)
-        console.log(this.book)
         this.setCurrentBook(this.book)
         this.initRendition() // 渲染电子书
         // this.initGesture() // 手势操作

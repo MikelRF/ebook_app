@@ -30,7 +30,6 @@
 <script>
   import { shelfMixin } from '../../utils/mixin'
   import { clearLocalForage } from '../../utils/localForage'
-  import { saveBookShelf } from '../../utils/LocalStorage'
   import { backToUpLevel } from '../../utils/store'
 
   export default {
@@ -89,7 +88,6 @@
               if (book.type === 2 && book.shelfCategoryName === this.title) {
                 book.itemList.forEach(subBook => {
                   subBook.selected = true
-                  console.log('subBook', subBook, 'selected', subBook.selected)
                   this.shelfSelected.pushWithoutDuplicate(subBook)
                 })
               }
@@ -117,7 +115,6 @@
       onComplete () {
         this.hidePopup()
         this.setShelfList(this.shelfList.filter(book => book.id !== this.shelfCategory.id)).then(() => {
-          saveBookShelf(sessionStorage.getItem('userName'), this.shelfList)
           this.setIsEditMode(false)
           this.$router.go(-1)
         })

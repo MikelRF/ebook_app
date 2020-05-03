@@ -82,7 +82,6 @@
           this.bookmark = []
         }
         const currentLocation = this.currentBook.rendition.currentLocation()
-        console.log(currentLocation)
         const cfibase = currentLocation.start.cfi.replace(/!.*/, '')
         const cfistart = currentLocation.start.cfi.replace(/.*!/, '').replace(/\)$/, '')
         const cfiend = currentLocation.end.cfi.replace(/.*!/, '').replace(/\)$/, '')

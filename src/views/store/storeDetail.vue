@@ -84,7 +84,7 @@
   import toast from '../../components/common/toast'
   import { addBookToShelf, removeBookFromShelf, getBookShelf, commentText, detail, getScore } from '../../api/store'
   import { px2rem, realpx } from '../../utils/book'
-  import { backToUpLevel, appendAddToShelf } from '../../utils/store'
+  import { backToUpLevel, appendAddToShelf, computedId } from '../../utils/store'
   import Epub from 'epubjs'
   import { shelfMixin } from '../../utils/mixin'
   import { getLocalForage } from '../../utils/localForage'
@@ -194,7 +194,7 @@
               if (result.error_code === 0) {
                 getBookShelf(sessionStorage.getItem('userName')).then(response => {
                   if (response.data.error_code === 0) {
-                    this.setShelfList(appendAddToShelf(response.data.data))
+                    this.setShelfList(appendAddToShelf(computedId(response.data.data)))
                   }
                 })
                 this.simpleToast('加入书架成功')

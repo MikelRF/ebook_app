@@ -67,7 +67,6 @@
       },
       getList() {
         list(this.$route.query.category).then(response => {
-          // console.log(response)
           this.list = response.data.data
           this.total = response.data.total
           const keyword = this.$route.query.keyword

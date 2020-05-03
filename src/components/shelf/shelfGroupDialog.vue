@@ -44,7 +44,6 @@
   import EbookDialog from '../common/dialog'
   import { shelfMixin } from '../../utils/mixin'
   import { removeAddFromShelf, appendAddToShelf } from '../../utils/store'
-  import { saveBookShelf } from '../../utils/LocalStorage'
   import { changeGroupName, moveToGroup, duplicateGroupName } from '../../api/store'
 
   export default {
@@ -212,7 +211,6 @@
         }
       },
       onComplete () {
-        saveBookShelf(sessionStorage.getItem('userName'), this.shelfList) // 缓存
         this.hide()
         this.setIsEditMode(false)
       }
