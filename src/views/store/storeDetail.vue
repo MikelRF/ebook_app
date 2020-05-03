@@ -177,6 +177,7 @@
             removeBookFromShelf(this.bookItem, sessionStorage.getItem('userName')).then(response => {
               // console.log('addOrRemoveShelf', response)
               if (response.data.error_code === 0) {
+                this.removeSelectedBook(this.bookItem)
                 getBookShelf(sessionStorage.getItem('userName')).then(response => {
                   if (response.data.error_code === 0) {
                     this.setShelfList(appendAddToShelf(response.data.data))

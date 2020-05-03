@@ -3,7 +3,7 @@ import { addCss, removeAllCss, ThemeList } from './book'
 import { saveLocation, getBookmark } from './LocalStorage'
 import { appendAddToShelf, computedId, gotoBookDetail, removeAddFromShelf } from './store'
 import { getBookShelf, moveOutOfGroup } from '../api/store'
-import { getLocalForage } from './localForage'
+import { getLocalForage, removeLocalForage } from './localForage'
 
 export const userMixin = {
   computed: {
@@ -119,6 +119,28 @@ export const shelfMixin = {
           this.simpleToast('移出分组失败...')
         }
         if (cb) cb()
+      })
+    },
+    // 删除离线
+    removeSelectedBook (bookItem) {
+      console.log(bookItem)
+      if (bookItem) {
+        console.log('123')
+        this.removeBook(bookItem)
+      } else {
+        Promise.all(this.shelfSelected.map(book => this.removeBook(book)))
+          .then(books => {
+            books.map(book => {
+              book.cache = false
+            })
+          })
+        this.getShelfList()
+      }
+    },
+    removeBook (book) {
+      return new Promise((resolve, reject) => {
+        removeLocalForage(`${sessionStorage.getItem('userName')}/${book.fileName}`)
+        resolve(book)
       })
     }
   }

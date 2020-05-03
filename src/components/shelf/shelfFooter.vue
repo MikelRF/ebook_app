@@ -22,7 +22,6 @@
   import { shelfMixin } from '../../utils/mixin'
   import { saveBookShelf } from '../../utils/LocalStorage'
   import { download, removeBookFromShelf } from '../../api/store'
-  import { removeLocalForage } from '../../utils/localForage'
 
   export default {
     name: 'shelfFooter',
@@ -78,7 +77,8 @@
       async setDownload () {
         this.onComplete()
         if (this.isDownload) { // 选中目标为已下载
-          this.removeSelectedBook(this.shelfList) // 删除缓存
+          this.removeSelectedBook() // 删除缓存
+          this.simpleToast('删除缓存成功')
         } else { // 未下载
           await this.downloadSelectedBook().then(res => {
             if (res) {
@@ -121,22 +121,6 @@
             })
         })
       },
-      // 删除离线
-      removeSelectedBook (list) {
-        Promise.all(this.shelfSelected.map(book => this.removeBook(book)))
-          .then(books => {
-            books.map(book => {
-              book.cache = false
-            })
-            this.simpleToast('删除缓存成功')
-          })
-      },
-      removeBook (book) {
-        return new Promise((resolve, reject) => {
-          removeLocalForage(`${sessionStorage.getItem('userName')}/${book.fileName}`)
-          resolve(book)
-        })
-      },
       // 显示缓存弹窗
       showDownload () {
         this.popupMenu = this.popup({
@@ -167,11 +151,14 @@
           const result = response.data
           console.log(response)
           if (result.error_code === 0) {
+            this.removeSelectedBook()
             this.shelfSelected.forEach(selected => {
               this.setShelfList(this.shelfList.filter(book => {
                 if (book.itemList) {
                   book.itemList = book.itemList.filter(subBook => subBook !== selected)
                 }
+                book.cache = false
+
                 return book !== selected
               }))
             })
